@@ -133,6 +133,9 @@ force_rebuild:
 check:
 	md5sum -c coremark.md5 
 
+%.echo:
+	echo $($*)
+
 ifdef ETC
 # Targets related to testing and releasing CoreMark. Not part of the general release!
 include Makefile.internal

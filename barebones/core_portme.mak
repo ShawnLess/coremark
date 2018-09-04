@@ -36,7 +36,7 @@ OUTFLAG= -o
 CC 		= $(RV_CC)
 # Flag : LD
 #	Use this flag to define compiler to use
-LD		= $(RV_LD)
+LD		= $(RV_CC)
 # Flag : AS
 #	Use this flag to define compiler to use
 AS		= $(RV_AS)
@@ -52,7 +52,7 @@ SEPARATE_COMPILE=1
 # Flag : SEPARATE_COMPILE
 # You must also define below how to create an object file, and how to link.
 OBJOUT 	= -o
-LFLAGS 	= 
+LFLAGS 	= -m32 -march=RV32IM -nostdlib -nostartfiles  -T $(RV_LINK_SCRIPT) -L $(MC_DIR)/software/spmd/common -Wl,-Map,link.map
 ASFLAGS =
 OFLAG 	= -o
 COUT 	= -c
@@ -61,7 +61,8 @@ LFLAGS_END =
 # Flag : PORT_SRCS
 # 	Port specific source files can be added here
 #	You may also need cvt.c if the fcvt functions are not provided as intrinsics by your compiler!
-PORT_SRCS = $(PORT_DIR)/core_portme.c $(PORT_DIR)/ee_printf.c
+PORT_SRCS = $(PORT_DIR)/core_portme.c $(PORT_DIR)/ee_printf.c 
+PORT_OBJS = $(PORT_DIR)/core_portme.o $(PORT_DIR)/ee_printf.o
 vpath %.c $(PORT_DIR)
 vpath %.s $(PORT_DIR)
 
