@@ -41,7 +41,7 @@ Original Author: Shay Gal-on
 	Sample implementation for standard time.h and windows.h definitions included.
 */
 CORETIMETYPE barebones_clock() {
-	#error "You must implement a method to measure time in barebones_clock()! This function should return current time.\n"
+//	#error "You must implement a method to measure time in barebones_clock()! This function should return current time.\n"
 }
 /* Define : TIMER_RES_DIVIDER
 	Divider to trade off timer resolution and total time that can be measured.
@@ -108,7 +108,7 @@ ee_u32 default_num_contexts=1;
 */
 void portable_init(core_portable *p, int *argc, char *argv[])
 {
-	#error "Call board initialization routines in portable init (if needed), in particular initialize UART!\n"
+//	#error "Call board initialization routines in portable init (if needed), in particular initialize UART!\n"
 	if (sizeof(ee_ptr_int) != sizeof(ee_u8 *)) {
 		ee_printf("ERROR! Please define ee_ptr_int to a type that holds a pointer!\n");
 	}

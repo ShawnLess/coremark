@@ -13,7 +13,19 @@
 # limitations under the License.
 # 
 # Original Author: Shay Gal-on
+############################################
+#  Porting Variables.
+#
+MC_DIR=/home/shx/bsg-cts/bsg_manycore
+RV_TOOL=$(MC_DIR)/software/riscv-tools/riscv-install/bin
+RV_LINK_SCRIPT=$(MC_DIR)/software/spmd/common/test.ld
 
+RV_PREFIX=riscv64-unknown-elf
+RV_CC=$(RV_TOOL)/$(RV_PREFIX)-gcc
+RV_LD=$(RV_TOOL)/$(RV_PREFIX)-ld
+RV_AS=$(RV_TOOL)/$(RV_PREFIX)-as
+RV_CFLAGS= -march=RV32IM -m32 -std=gnu99
+#############################################
 #File : core_portme.mak
 
 # Flag : OUTFLAG
@@ -21,16 +33,16 @@
 OUTFLAG= -o
 # Flag : CC
 #	Use this flag to define compiler to use
-CC 		= gcc
+CC 		= $(RV_CC)
 # Flag : LD
 #	Use this flag to define compiler to use
-LD		= gld
+LD		= $(RV_LD)
 # Flag : AS
 #	Use this flag to define compiler to use
-AS		= gas
+AS		= $(RV_AS)
 # Flag : CFLAGS
 #	Use this flag to define compiler options. Note, you can add compiler options from the command line using XCFLAGS="other flags"
-PORT_CFLAGS = -O0 -g
+PORT_CFLAGS = -O0 -g  $(RV_CFLAGS)
 FLAGS_STR = "$(PORT_CFLAGS) $(XCFLAGS) $(XLFLAGS) $(LFLAGS_END)"
 CFLAGS = $(PORT_CFLAGS) -I$(PORT_DIR) -I. -DFLAGS_STR=\"$(FLAGS_STR)\" 
 #Flag : LFLAGS_END
