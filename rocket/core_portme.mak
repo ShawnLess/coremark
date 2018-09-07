@@ -13,9 +13,12 @@
 # limitations under the License.
 # 
 # Original Author: Shay Gal-on
+
 ############################################
 #  Porting Variables.
 #
+HOST_RUN=0
+
 #ROCKET_PATH=/home/drichmond/Research/repositories/git/celerity/bsg_riscv/
 ifeq ($(ROCKET_PATH),)
 ROCKET_PATH=$(shell readlink -m ../celerity/bsg_riscv/)
@@ -36,18 +39,23 @@ RV_CFLAGS= -static -std=gnu99 -O2 -ffast-math -fno-common -fno-builtin-printf -D
 # Flag : OUTFLAG
 #	Use this flag to define how to to get an executable (e.g -o)
 OUTFLAG= -o
-# Flag : CC
-#	Use this flag to define compiler to use
+ifneq ($(HOST_RUN),1)
 CC 		= $(RV_CC)
-# Flag : LD
-#	Use this flag to define compiler to use
 LD		= $(RV_CC)
-# Flag : AS
-#	Use this flag to define compiler to use
 AS		= $(RV_AS)
+else
+CC 		= gcc
+LD		= gcc
+AS		= as
+endif
 # Flag : CFLAGS
 #	Use this flag to define compiler options. Note, you can add compiler options from the command line using XCFLAGS="other flags"
+ifneq ($(HOST_RUN),1)
 PORT_CFLAGS = -O0 -g  $(RV_CFLAGS)
+else
+PORT_CFLAGS = -O0 -g -DHOST_RUN=1
+endif
+
 FLAGS_STR = "$(PORT_CFLAGS) $(XCFLAGS) $(XLFLAGS) $(LFLAGS_END)"
 CFLAGS = $(PORT_CFLAGS) -I$(PORT_DIR) -I. -DFLAGS_STR=\"$(FLAGS_STR)\" 
 #Flag : LFLAGS_END
@@ -57,7 +65,14 @@ SEPARATE_COMPILE=1
 # Flag : SEPARATE_COMPILE
 # You must also define below how to create an object file, and how to link.
 OBJOUT 	= -o
+
+ifneq ($(HOST_RUN),1)
 LFLAGS 	= $(RV_BENCH_PATH)/syscalls.o -nostartfiles -ffast-math -fno-builtin-printf -lc -lgcc -lm  -T $(RV_LINK_SCRIPT) -L $(RV_BENCH_PATH) -Wl,-Map,link.map 
+else
+#LFLAGS  = -lc -lgcc -L`gcc --print-file-name=` -static /usr/lib64/crt1.o /usr/lib64/crti.o /usr/lib64/crtn.o
+LFLAGS  = -lc -lgcc
+endif
+
 ASFLAGS = 
 OFLAG 	= -o
 COUT 	= -c
