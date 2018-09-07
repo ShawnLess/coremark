@@ -51,9 +51,9 @@ endif
 # Flag : CFLAGS
 #	Use this flag to define compiler options. Note, you can add compiler options from the command line using XCFLAGS="other flags"
 ifneq ($(HOST_RUN),1)
-PORT_CFLAGS = -O0 -g  $(RV_CFLAGS)
+PORT_CFLAGS = -O0 -g  $(RV_CFLAGS) 
 else
-PORT_CFLAGS = -O0 -g -DHOST_RUN=1
+PORT_CFLAGS = -O0 -g -DHOST_RUN=1 
 endif
 
 FLAGS_STR = "$(PORT_CFLAGS) $(XCFLAGS) $(XLFLAGS) $(LFLAGS_END)"
@@ -69,7 +69,6 @@ OBJOUT 	= -o
 ifneq ($(HOST_RUN),1)
 LFLAGS 	= $(RV_BENCH_PATH)/syscalls.o -nostartfiles -ffast-math -fno-builtin-printf -lc -lgcc -lm  -T $(RV_LINK_SCRIPT) -L $(RV_BENCH_PATH) -Wl,-Map,link.map 
 else
-#LFLAGS  = -lc -lgcc -L`gcc --print-file-name=` -static /usr/lib64/crt1.o /usr/lib64/crti.o /usr/lib64/crtn.o
 LFLAGS  = -lc -lgcc
 endif
 

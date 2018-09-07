@@ -71,7 +71,7 @@ Original Author: Shay Gal-on
  #define COMPILER_FLAGS FLAGS_STR /* "Please put compiler flags here (e.g. -o3)" */
 #endif
 #ifndef MEM_LOCATION 
- #define MEM_LOCATION "STACK"
+ #define MEM_LOCATION "STATIC"
 #endif
 
 /* Data Types :
