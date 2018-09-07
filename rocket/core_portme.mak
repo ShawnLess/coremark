@@ -23,6 +23,8 @@ HOST_RUN=0
 ifeq ($(ROCKET_PATH),)
 ROCKET_PATH=$(shell readlink -m ../celerity/bsg_riscv/)
 endif
+ROCKET_BENCH_PATH=$(shell readlink -m ../celerity/bsg_rocket/common/benchmark)
+
 RV_TOOL_PATH=$(ROCKET_PATH)/riscv-install/bin/
 RV_BENCH_PATH=$(ROCKET_PATH)/rocket-chip/riscv-tools/riscv-tests/benchmarks/
 RV_COMMON_PATH=$(RV_BENCH_PATH)/common/
@@ -32,6 +34,7 @@ RV_PREFIX=riscv64-unknown-elf
 RV_CC=$(RV_TOOL_PATH)/$(RV_PREFIX)-gcc
 RV_LD=$(RV_TOOL_PATH)/$(RV_PREFIX)-ld
 RV_AS=$(RV_TOOL_PATH)/$(RV_PREFIX)-as
+RV_HEX=$(RV_TOOL_PATH)/elf2hex 
 RV_CFLAGS= -static -std=gnu99 -O2 -ffast-math -fno-common -fno-builtin-printf -DPREALLOCATE=0 -DHOST_DEBUG=0
 #############################################
 #File : core_portme.mak
@@ -116,6 +119,12 @@ port_pre% port_post% :
 
 port_prebuild :
 	make -C $(ROCKET_PATH)/rocket-chip/riscv-tools/riscv-tests/benchmarks/ crt.o syscalls.o
+
+ifneq ($(HOST_RUN),1)
+port_postbuild:
+	$(RV_HEX) 16 32768 coremark.bin > coremark.riscv.hex
+	cp coremark.riscv.hex $(ROCKET_BENCH_PATH)/
+endif
 # FLAG : OPATH
 # Path to the output folder. Default -c current folder.
 OPATH = ./
