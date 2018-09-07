@@ -26,7 +26,8 @@ limitations under the License.
 #define UPPERCASE   (1<<6)	/* 'ABCDEF' */
 
 #define is_digit(c) ((c) >= '0' && (c) <= '9')
-
+//Shaolin -- Declare the putchar define in RISC-V routines.
+//int putchar(int);
 static char *digits = "0123456789abcdefghijklmnopqrstuvwxyz";
 static char *upper_digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 static size_t strnlen(const char *s, size_t count);
@@ -560,6 +561,7 @@ repeat:
   return str - buf;
 }
 
+int putchar(int);
 void uart_send_char(char c) {
 //#error "You must implement the method uart_send_char to use this file!\n";
 /*	Output of a char to a UART usually follows the following model:
@@ -574,6 +576,9 @@ void uart_send_char(char c) {
 	
 	Check the UART sample code on your platform or the board documentation.
 */
+// Shaolin--
+// Implmented in syscall.c in RISC-V toolchain. 
+  putchar( (int)c);
 }
 
 int ee_printf(const char *fmt, ...)

@@ -16,7 +16,10 @@
 ############################################
 #  Porting Variables.
 #
-ROCKET_PATH=/home/drichmond/Research/repositories/git/celerity/bsg_riscv/
+#ROCKET_PATH=/home/drichmond/Research/repositories/git/celerity/bsg_riscv/
+ifeq ($(ROCKET_PATH),)
+ROCKET_PATH=$(shell readlink -m ../celerity/bsg_riscv/)
+endif
 RV_TOOL_PATH=$(ROCKET_PATH)/riscv-install/bin/
 RV_BENCH_PATH=$(ROCKET_PATH)/rocket-chip/riscv-tools/riscv-tests/benchmarks/
 RV_COMMON_PATH=$(RV_BENCH_PATH)/common/
@@ -54,7 +57,7 @@ SEPARATE_COMPILE=1
 # Flag : SEPARATE_COMPILE
 # You must also define below how to create an object file, and how to link.
 OBJOUT 	= -o
-LFLAGS 	= $(RV_BENCH_PATH)/syscalls.o -nostartfiles -ffast-math -fno-builtin-printf -lc -lgcc  -T $(RV_LINK_SCRIPT) -L $(RV_BENCH_PATH) -Wl,-Map,link.map 
+LFLAGS 	= $(RV_BENCH_PATH)/syscalls.o -nostartfiles -ffast-math -fno-builtin-printf -lc -lgcc -lm  -T $(RV_LINK_SCRIPT) -L $(RV_BENCH_PATH) -Wl,-Map,link.map 
 ASFLAGS = 
 OFLAG 	= -o
 COUT 	= -c
@@ -63,8 +66,10 @@ LFLAGS_END =
 # Flag : PORT_SRCS
 # 	Port specific source files can be added here
 #	You may also need cvt.c if the fcvt functions are not provided as intrinsics by your compiler!
+#PORT_SRCS = $(PORT_DIR)/core_portme.c $(PORT_DIR)/ee_printf.c $(PORT_DIR)/cvt.c 
+#PORT_OBJS = $(PORT_DIR)/core_portme.o $(PORT_DIR)/ee_printf.o $(PORT_DIR)/cvt.o
 PORT_SRCS = $(PORT_DIR)/core_portme.c $(PORT_DIR)/ee_printf.c 
-PORT_OBJS = $(PORT_DIR)/core_portme.o $(PORT_DIR)/ee_printf.o 
+PORT_OBJS = $(PORT_DIR)/core_portme.o $(PORT_DIR)/ee_printf.o
 vpath %.c $(PORT_DIR)
 vpath %.s $(PORT_DIR)
 
@@ -102,3 +107,4 @@ port_prebuild :
 OPATH = ./
 MKDIR = mkdir -p
 
+PORT_CLEAN=$(PORT_OBJS)

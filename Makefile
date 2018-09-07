@@ -123,7 +123,7 @@ load: $(OUTFILE)
 
 .PHONY: clean
 clean:
-	rm -f $(OUTFILE) $(OPATH)*.log *.info $(OPATH)index.html $(PORT_CLEAN)
+	rm -f $(OUTFILE) $(OPATH)*.log *.info $(OPATH)index.html $(PORT_CLEAN) *.o *.bin
 
 .PHONY: force_rebuild
 force_rebuild:
