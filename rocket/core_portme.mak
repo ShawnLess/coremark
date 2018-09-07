@@ -19,11 +19,8 @@
 #
 HOST_RUN=0
 
-#ROCKET_PATH=/home/drichmond/Research/repositories/git/celerity/bsg_riscv/
-ifeq ($(ROCKET_PATH),)
-ROCKET_PATH=$(shell readlink -m ../celerity/bsg_riscv/)
-endif
-ROCKET_BENCH_PATH=$(shell readlink -m ../celerity/bsg_rocket/common/benchmark)
+ROCKET_PATH ?= /home/dustinar/Research/repositories/git/celerity/bsg_riscv/
+ROCKET_BENCH_PATH=$(shell readlink -m ../bsg_rocket/common/benchmark)
 
 RV_TOOL_PATH=$(ROCKET_PATH)/riscv-install/bin/
 RV_BENCH_PATH=$(ROCKET_PATH)/rocket-chip/riscv-tools/riscv-tests/benchmarks/

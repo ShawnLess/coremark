@@ -40,11 +40,12 @@ Original Author: Shay Gal-on
 	e.g. Read value from on board RTC, read value from cpu clock cycles performance counter etc. 
 	Sample implementation for standard time.h and windows.h definitions included.
 */
+#define read_csr_safe(reg) ({ register long __tmp asm("a0"); \
+  asm volatile ("csrr %0, " #reg : "=r"(__tmp)); \
+  __tmp; })
 CORETIMETYPE barebones_clock() {
 //	#error "You must implement a method to measure time in barebones_clock()! This function should return current time.\n"
-        static CORETIMETYPE fake_timer=0;
-        fake_timer += 100;
-        return fake_timer;
+	return read_csr_safe(cycle);
 }
 /* Define : TIMER_RES_DIVIDER
 	Divider to trade off timer resolution and total time that can be measured.
