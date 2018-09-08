@@ -31,7 +31,8 @@ RV_CC=$(RV_TOOL_PATH)/$(RV_PREFIX)-gcc
 RV_LD=$(RV_TOOL_PATH)/$(RV_PREFIX)-ld
 RV_AS=$(RV_TOOL_PATH)/$(RV_PREFIX)-as
 RV_HEX=$(RV_TOOL_PATH)/elf2hex 
-RV_CFLAGS=-static -std=gnu99 -O2 -ffast-math -fno-common -fno-builtin-printf -DPREALLOCATE=0 -DHOST_DEBUG=0
+RV_CFLAGS=-static -std=gnu99 -O2 -ffast-math -fno-common -fno-builtin-printf -DPREALLOCATE=0 -DHOST_DEBUG=0 \
+
 #############################################
 #File : core_portme.mak
 
@@ -56,7 +57,7 @@ PORT_CFLAGS = -O0 -g -DHOST_RUN=1
 endif
 
 FLAGS_STR = "$(PORT_CFLAGS) $(XCFLAGS) $(XLFLAGS) $(LFLAGS_END)"
-CFLAGS = $(PORT_CFLAGS) -I$(PORT_DIR) -I. -I.. -DFLAGS_STR=\"$(FLAGS_STR)\" 
+CFLAGS = $(PORT_CFLAGS) -I$(PORT_DIR) -I. -I.. -DFLAGS_STR=\"$(FLAGS_STR)\" -I$(ROCKET_BENCH_PATH)/bsg_rocket_manycore_common/
 #Flag : LFLAGS_END
 #	Define any libraries needed for linking or other flags that should come at the end of the link line (e.g. linker scripts). 
 #	Note : On certain platforms, the default clock_gettime implementation is supported but requires linking of librt.
@@ -79,8 +80,8 @@ LFLAGS_END =
 # Flag : PORT_SRCS
 # 	Port specific source files can be added here
 #	You may also need cvt.c if the fcvt functions are not provided as intrinsics by your compiler!
-PORT_SRCS = $(PORT_DIR)/core_portme.c $(PORT_DIR)/ee_printf.c $(PORT_DIR)/rocket_manycore.c
-PORT_OBJS = $(PORT_DIR)/core_portme.o $(PORT_DIR)/ee_printf.o $(PORT_DIR)/rocket_manycore.c
+PORT_SRCS = $(PORT_DIR)/core_portme.c $(PORT_DIR)/ee_printf.c $(PORT_DIR)/rocket-manycore.c
+PORT_OBJS = $(PORT_DIR)/core_portme.o $(PORT_DIR)/ee_printf.o $(PORT_DIR)/rocket-manycore.o
 vpath %.c $(PORT_DIR)
 vpath %.s $(PORT_DIR)
 

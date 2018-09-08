@@ -6,7 +6,7 @@
 //
 
 //////////////////////////////////////////////////////////////////////
-#include "rocket_manycore.h"
+#include "rocket-manycore.h"
 
 // Global variables decleared in the manycore program / memory space. 
 // pMC_MatrixData is the start address for matrix A in manycore
@@ -27,19 +27,19 @@ ee_u32 rocket_init_matrix(ee_u32 blksize, void *memblk, ee_s32 seed, mat_params 
 	gRC_manycore_mat_params.B = p->B;
 	gRC_manycore_mat_params.C = p->C;
 	gRC_manycore_mat_params.N = p->N;
-	gRC_manycore_mat_params.base_addr = &pMC_manycore_mat_params;
-	return manycore_init_matrix(p);
+	gRC_manycore_mat_params.base_addr = (ee_u32) &pMC_manycore_mat_params;
+	return manycore_init_matrix(&gRC_manycore_mat_params);
 }
 
 ee_u32 rocket_bench_matrix(mat_params *p, ee_s16 seed, ee_u16 crc){
-        ee_u32 crc;
+        ee_u32 rcrc;
 	// I would consider this dangerous, but I don't see any
 	// alternative. Passing a global variable like gRC_manycore_mat_params
 	// is just bad form, but I don't see any other way. 
-	manycore_bench_matrix_nb(gRC_manycore_mat_params, 0, 0, seed, crc);
-	bsg_rocc_poll((void*)&(gRC_manycore_mat_params->done));
-	bsg_rocc_read(0, 0, &(pMC_manycore_mat_params->crc), crc);
-	return crc;
+	manycore_bench_matrix_nb(&gRC_manycore_mat_params, 0, 0, seed, crc);
+	coremark_rocc_poll((void*)&(gRC_manycore_mat_params.done), 100000);
+	bsg_rocc_read( 0, 0, &(pMC_manycore_mat_params->crc), rcrc );
+	return rcrc;
 }
 
 /* Initialize the matrix benchmark parameters on the manycore processor */
@@ -50,7 +50,7 @@ ee_u32 manycore_init_matrix(manycore_mat_params* mcp) {
 
 	manycore_mat_params *pRC_manycore_mat_params;
 	unsigned int i;
-	ee_u32 N = p->N;
+	ee_u32 N = mcp->N;
 
 	// Compute the matrix pointers in the manycore memory space
 	MATDAT *pMC_A = pMC_MatrixData; // Global Variable
@@ -63,11 +63,12 @@ ee_u32 manycore_init_matrix(manycore_mat_params* mcp) {
 					*manycore_mem_vec); // Global Variable
 	MATDAT *pRC_A = MC2RC_PTR(pMC_A, *manycore_mem_vec); // Global Variable
 	MATDAT *pRC_B = MC2RC_PTR(pMC_B, *manycore_mem_vec); // Global Variable
+	MATDAT *pRC_C = MC2RC_PTR(pMC_C, *manycore_mem_vec); // Global Variable
 
 	// Copy the matricies A & B
 	for(i = 0; i < N*N; ++i){
-		pRC_A[i] = p->A[i];
-		pRC_B[i] = p->B[i];
+		pRC_A[i] = mcp->A[i];
+		pRC_B[i] = mcp->B[i];
 		pRC_C[i] = 0;
 	}
 
@@ -76,7 +77,7 @@ ee_u32 manycore_init_matrix(manycore_mat_params* mcp) {
 	pRC_manycore_mat_params->A = pMC_A; 
 	pRC_manycore_mat_params->B = pMC_B;
 	pRC_manycore_mat_params->C = pMC_C;
-	pRC_manycore_mat_params->base_addr = p->base_addr;
+	pRC_manycore_mat_params->base_addr = mcp->base_addr;
 
 	// Load the manycore program at processor x = 0, y= 0
 	// 
@@ -99,8 +100,12 @@ ee_u32 manycore_init_matrix(manycore_mat_params* mcp) {
 // This is a non-blocking call, so we do not wait for the result
 void manycore_bench_matrix_nb(manycore_mat_params *p, 
 			ee_u32 y, ee_u32 x, ee_s16 seed, ee_u16 crc){
-        bsg_rocc_write(y, x, &(pMC_manycore_mat_params->seed), ee_u32(seed));
-        bsg_rocc_write(y, x, &(pMC_manycore_mat_params->crc), ee_u32(crc));
+	ee_u32 seed32 = seed;
+	ee_u32 crc32 = crc
+
+        bsg_rocc_write( y, x, &(pMC_manycore_mat_params->seed), seed32 );
+
+        bsg_rocc_write( y, x, &(pMC_manycore_mat_params->crc), crc32 );
 	
 	// Clear the done flag
         p->done = 0;
@@ -109,7 +114,7 @@ void manycore_bench_matrix_nb(manycore_mat_params *p,
         bsg_rocc_unfreeze(y, x);
 }
 
-int bsg_rocc_poll(void  *pRCViewDone, int wait_limit=100000) {
+int cmark_rocc_poll(void  *pRCViewDone, int wait_limit) {
 	int volatile *pDone = (int volatile *)(pRCViewDone);
 	int i = 0;
 	do {
