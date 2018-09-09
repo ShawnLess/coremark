@@ -21,7 +21,7 @@ typedef struct manycore_results_ {
         // the Rocket memory space. When manycore stores data back to the
         // rocket, it should add the base_addr to the buffer to get the right
         // address
-        ee_u32 addr; // TODO: Double check this is in tile memory space!!!
+        //ee_u32 addr; // TODO: Double check this is in tile memory space!!!
         // Return value
         ee_u32 result;
 	// Done Flag
@@ -35,8 +35,9 @@ typedef struct manycore_results_ {
 
 // Defined in manycores code
 extern core_results        *bresults;
+extern manycore_results    *_mcresult;
 extern int                 *manycore_mem_vec;
-extern void                *mcmemblk;
+extern unsigned long       *mcmemblk;
 
 // Defined in rocket-manycore.c
 extern manycore_results           mcresults[bsg_tiles_X*bsg_tiles_Y]; // Is this outside the 22-bit address space? 
@@ -45,7 +46,7 @@ extern manycore_results           mcresults[bsg_tiles_X*bsg_tiles_Y]; // Is this
 //////////////////////////////////////////////////////////////////////
 /* matrix benchmark functions */
 
-ee_u32 mcrocket_init(manycore_results *p);
+ee_u32 mcrocket_init(manycore_results *manycore_p, manycore_results *rocket_p);
 ee_u32 mcrocket_unload(core_results *crp, manycore_results *mcrp);
 int coremark_rocc_poll(void *vp, int wait_limit);
 

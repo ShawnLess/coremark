@@ -1,4 +1,26 @@
 #include "coremark.h"
+#include "rocket-manycore.h"
+
+core_results        *bresults;
+manycore_results    *_mcresult;
+int                 *manycore_mem_vec;
+unsigned long       mcmemblk[512];
+
+void main(){
+	void *ret;
+	ret = iterate(bresults);
+	_mcresult->seed1 = bresults->seed1;
+	_mcresult->seed2 = bresults->seed2;
+	_mcresult->seed3 = bresults->seed3;
+	_mcresult->size = bresults->size;
+
+	_mcresult->crc = bresults->crc;
+	_mcresult->crclist = bresults->crcresult;
+	_mcresult->crcmatrix = bresults->crcmatrix;
+	_mcresult->crcstate = bresults->crcstate;
+	_mcresult->done = 1;
+}
+
 void *iterate(void *pres) {
 	ee_u32 i;
 	ee_u16 crc;

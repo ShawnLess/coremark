@@ -99,7 +99,8 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 	CORE_TICKS total_time;
 	core_results *results;
 
-	results = MC2RC_PTR(bresults, manycore_mem_vec); // TODO: Remove *? 
+	results = MC2RC_PTR(bresults, manycore_mem_vec);
+	//_mcptr = MC2RC_PTR(&(_mcresult), manycore_mem_vec);
 #if (MEM_METHOD==MEM_STACK)
 	ee_u8 stack_memblock[TOTAL_DATA_SIZE*MULTITHREAD];
 #endif
@@ -201,9 +202,15 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 	// DR: init results struct on manycore
 	// Could wrap this in portable_init... but meh
 
-	for(ee_u32 y=0; y < bsg_tiles_Y; ++y){
-		for(ee_u32 x=0; x < bsg_tiles_X; ++x){
-			mcrocket_init(&mcresults[y*bsg_tiles_X + x]);
+        for(ee_u32 y=0; y < bsg_tiles_Y; ++y){
+                for(ee_u32 x=0; x < bsg_tiles_X; ++x){
+			if((uint64_t)&mcresults[y*bsg_tiles_X + x] > (1<< 21)){
+				printf("Error! pointer to manycore_results struct is outside address space of tile!\n");
+				exit(-1);
+			}
+
+			_mcresult = &mcresults[y*bsg_tiles_X + x];
+                        //mcrocket_init(_mcinit, &mcresults[y*bsg_tiles_X + x]);
 #ifndef DMA_LOAD
 			bsg_rocc_load_manycore(y, x);
 #else
@@ -211,7 +218,7 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 			bsg_rocket_fence( );
 #endif
 		}
-	}
+        }
 
 	/* perform actual benchmark */
 	start_time();

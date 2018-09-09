@@ -9,14 +9,14 @@
 #include "rocket-manycore.h"
 manycore_results           mcresults[bsg_tiles_X*bsg_tiles_Y]; // Is this outside the 22-bit address space? 
 
-ee_u32 mcrocket_init(manycore_results *p){
-	if((uint64_t)p > (1<< 21)){
+ee_u32 mcrocket_init(manycore_results *manycore_p, manycore_results *rocket_p){
+	if((uint64_t)rocket_p > (1<< 21)){
 		printf("Error! pointer to manycore_results struct is outside address space of tile!\n");
 		exit(-1);
 	}
-	p->addr = (ee_u32) p;
-	p->result = -1;
-	p->done = 0;
+	//manycore_p->addr = (ee_u32) rocket_p;
+	manycore_p->result = -1;
+	manycore_p->done = 0;
 	return 0;
 }
 
