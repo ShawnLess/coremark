@@ -162,6 +162,7 @@ ee_s16 matrix_test(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B, MATDAT val) {
 	Note:
 	The seed parameter MUST be supplied from a source that cannot be determined at compile time
 */
+#ifndef MANYCORE_PROG
 ee_u32 core_init_matrix(ee_u32 blksize, void *memblk, ee_s32 seed, mat_params *p) {
 	ee_u32 N=0;
 	MATDAT *A;
@@ -202,6 +203,7 @@ ee_u32 core_init_matrix(ee_u32 blksize, void *memblk, ee_s32 seed, mat_params *p
 #endif
 	return N;
 }
+#endif
 
 /* Function: matrix_sum
 	Calculate a function that depends on the values of elements in the matrix.

@@ -196,6 +196,7 @@ ee_u16 core_bench_list(core_results *res, ee_s16 finder_idx) {
 #endif
 	return retval;
 }
+#ifndef MANYCORE_PROG
 /* Function: core_list_init
 	Initialize list with data.
 
@@ -263,6 +264,7 @@ list_head *core_list_init(ee_u32 blksize, list_head *memblock, ee_s16 seed) {
 #endif
 	return list;
 }
+#endif
 
 /* Function: core_list_insert
 	Insert an item to the list

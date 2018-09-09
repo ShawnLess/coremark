@@ -30,6 +30,7 @@ Original Author: Shay Gal-on
 	
 	e.g. read the value on GPIO pins connected to switches, or invoke special simulator functions.
 */
+#ifndef MANYCORE_PROG
 #if (SEED_METHOD==SEED_VOLATILE)
 	extern volatile ee_s32 seed1_volatile;
 	extern volatile ee_s32 seed2_volatile;
@@ -134,6 +135,8 @@ ee_s32 get_seed_32(int i) {
 	return retval;
 }
 #endif
+//endif for MANYCORE_PROG
+#endif 
 
 /* Function: crc*
 	Service functions to calculate 16b CRC code.
@@ -177,6 +180,7 @@ ee_u16 crc16(ee_s16 newval, ee_u16 crc) {
 	return crcu16((ee_u16)newval, crc);
 }
 
+#ifndef MANYCORE_PROG
 ee_u8 check_data_types() {
 	ee_u8 retval=0;
 	if (sizeof(ee_u8) != 1) {
@@ -208,3 +212,4 @@ ee_u8 check_data_types() {
 	}
 	return retval;
 }
+#endif

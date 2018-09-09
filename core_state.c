@@ -113,6 +113,8 @@ static ee_u8 *errpat[4]  ={(ee_u8 *)"T0.3e-1F",(ee_u8 *)"-T.T++Tq",(ee_u8 *)"1T3
 	Note:
 	The seed parameter MUST be supplied from a source that cannot be determined at compile time
 */
+
+#ifndef MANYCORE_PROG
 void core_init_state(ee_u32 size, ee_s16 seed, ee_u8 *p) {
 	ee_u32 total=0,next=0,i;
 	ee_u8 *buf=0;
@@ -164,6 +166,7 @@ void core_init_state(ee_u32 size, ee_s16 seed, ee_u8 *p) {
 	ee_printf("State Input: %s\n",start);
 #endif
 }
+#endif
 
 static ee_u8 ee_isdigit(ee_u8 c) {
 	ee_u8 retval;
