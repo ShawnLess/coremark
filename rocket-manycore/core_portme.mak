@@ -67,7 +67,7 @@ SEPARATE_COMPILE=1
 OBJOUT 	= -o
 
 ifneq ($(HOST_RUN),1)
-LFLAGS 	= $(RV_BENCH_PATH)/syscalls.o -nostartfiles -ffast-math -fno-builtin-printf -lc -lgcc -lm  -T $(RV_LINK_SCRIPT) -L $(RV_BENCH_PATH) -Wl,-Map,link.map 
+LFLAGS 	= $(RV_BENCH_PATH)/bsg_rocket_rocc.o $(RV_BENCH_PATH)/syscalls.o -nostartfiles -ffast-math -fno-builtin-printf -lc -lgcc -lm  -T $(RV_LINK_SCRIPT) -L $(RV_BENCH_PATH) -Wl,-Map,link.map 
 else
 LFLAGS  = -lc -lgcc
 endif
@@ -113,7 +113,7 @@ $(OPATH)$(PORT_DIR)/%$(OEXT) : %.s
 port_pre% port_post% : 
 
 port_prebuild :
-	make -C $(ROCKET_PATH)/rocket-chip/riscv-tools/riscv-tests/benchmarks/ crt.o syscalls.o
+	make -C $(ROCKET_PATH)/rocket-chip/riscv-tools/riscv-tests/benchmarks/ crt.o syscalls.o bsg_rocket_rocc.o
 
 ifneq ($(HOST_RUN),1)
 port_postbuild:

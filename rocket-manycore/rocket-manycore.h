@@ -10,6 +10,7 @@
 //////////////////////////////////////////////////////////////////////
 #include <inttypes.h>
 #include "bsg_rocket_rocc.h"
+#include "bsg_manycore_buffer.h"
 #include "coremark.h"
 //The APIs for calling RoCC interface.
 

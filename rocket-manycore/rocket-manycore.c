@@ -20,6 +20,9 @@ extern int                 *manycore_mem_vec;
 // gRC_manycore_mat_params holds the matrix offload parameters
 manycore_mat_params         gRC_manycore_mat_params;
 
+// Definition conflicted with bsg_rocc_poll
+int coremark_rocc_poll(void  *pRCViewDone, int wait_limit);
+
 ee_u32 rocket_init_matrix(ee_u32 blksize, void *memblk, ee_s32 seed, mat_params *p){
 	ee_u32 ret;
 	ret = core_init_matrix(blksize, memblk, seed, p);
@@ -101,11 +104,10 @@ ee_u32 manycore_init_matrix(manycore_mat_params* mcp) {
 void manycore_bench_matrix_nb(manycore_mat_params *p, 
 			ee_u32 y, ee_u32 x, ee_s16 seed, ee_u16 crc){
 	ee_u32 seed32 = seed;
-	ee_u32 crc32 = crc
+	ee_u32 crc32 = crc;
 
-        bsg_rocc_write( y, x, &(pMC_manycore_mat_params->seed), seed32 );
-
-        bsg_rocc_write( y, x, &(pMC_manycore_mat_params->crc), crc32 );
+	bsg_rocc_write( y, x, &(pMC_manycore_mat_params->seed), seed32 );
+	bsg_rocc_write( y, x, &(pMC_manycore_mat_params->crc), crc32 );
 	
 	// Clear the done flag
         p->done = 0;
@@ -114,7 +116,7 @@ void manycore_bench_matrix_nb(manycore_mat_params *p,
         bsg_rocc_unfreeze(y, x);
 }
 
-int cmark_rocc_poll(void  *pRCViewDone, int wait_limit) {
+int coremark_rocc_poll(void  *pRCViewDone, int wait_limit) {
 	int volatile *pDone = (int volatile *)(pRCViewDone);
 	int i = 0;
 	do {
