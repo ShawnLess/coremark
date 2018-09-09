@@ -280,6 +280,7 @@ list_head *core_list_init(ee_u32 blksize, list_head *memblock, ee_s16 seed) {
 	Returns:
 	Pointer to new item.
 */
+#ifndef MANYCORE_PROG
 list_head *core_list_insert_new(list_head *insert_point, list_data *info, list_head **memblock, list_data **datablock
 	, list_head *memblock_end, list_data *datablock_end) {
 	list_head *newitem;
@@ -300,7 +301,7 @@ list_head *core_list_insert_new(list_head *insert_point, list_data *info, list_h
 	
 	return newitem;
 }
-
+#endif
 /* Function: core_list_remove
 	Remove an item from the list.
 
