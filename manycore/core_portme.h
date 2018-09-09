@@ -94,7 +94,7 @@ typedef unsigned int ee_u32;
 /*********/
 // Shaolin
 // Port for Rocket
-typedef unsigned long long ee_ptr_int;
+typedef unsigned int ee_ptr_int;
 /********/
 typedef size_t ee_size_t;
 #define NULL ((void *)0)

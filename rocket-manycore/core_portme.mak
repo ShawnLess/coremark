@@ -19,7 +19,13 @@
 #
 # Please use the question mark notation and stop overriding my environment variables
 ROCKET_PATH ?= $(shell readlink -m ../celerity/bsg_riscv/)
-ROCKET_BENCH_PATH ?= $(shell readlink -m ../bsg_rocket/common/benchmark)
+ROCKET_BENCH_PATH ?= $(shell readlink -m ../celerity/bsg_rocket/common/benchmark)
+
+MANYCORE_COREMARK ?=$(shell readlink -m ../celerity/bsg_manycore/software/spmd/coremark)
+
+MANYCORE_IMAGE_NAME = manycore_coremark
+MANYCORE_IMAGE_C_FILE=$(MANYCORE_IMAGE_NAME).vec.c
+MANYCORE_IMAGE_64BIN_FILE=$(MANYCORE_IMAGE_NAME).riscv64
 
 RV_TOOL_PATH=$(ROCKET_PATH)/riscv-install/bin/
 RV_BENCH_PATH=$(ROCKET_PATH)/rocket-chip/riscv-tools/riscv-tests/benchmarks/
@@ -67,7 +73,7 @@ SEPARATE_COMPILE=1
 OBJOUT 	= -o
 
 ifneq ($(HOST_RUN),1)
-LFLAGS 	= $(RV_BENCH_PATH)/bsg_rocket_rocc.o $(RV_BENCH_PATH)/syscalls.o -nostartfiles -ffast-math -fno-builtin-printf -lc -lgcc -lm  -T $(RV_LINK_SCRIPT) -L $(RV_BENCH_PATH) -Wl,-Map,link.map 
+LFLAGS 	= $(RV_BENCH_PATH)/bsg_rocket_rocc.o $(RV_BENCH_PATH)/syscalls.o -nostartfiles -ffast-math -fno-builtin-printf -lc -lgcc -lm  -T $(RV_LINK_SCRIPT) -L $(RV_BENCH_PATH) -Wl,-Map,link.map,--just-symbols=$(PORT_DIR)/$(MANYCORE_IMAGE_64BIN_FILE)
 else
 LFLAGS  = -lc -lgcc
 endif
@@ -80,8 +86,13 @@ LFLAGS_END =
 # Flag : PORT_SRCS
 # 	Port specific source files can be added here
 #	You may also need cvt.c if the fcvt functions are not provided as intrinsics by your compiler!
-PORT_SRCS = $(PORT_DIR)/core_portme.c $(PORT_DIR)/ee_printf.c $(PORT_DIR)/rocket-manycore.c
-PORT_OBJS = $(PORT_DIR)/core_portme.o $(PORT_DIR)/ee_printf.o $(PORT_DIR)/rocket-manycore.o
+PORT_SRCS = $(PORT_DIR)/core_portme.c \
+            $(PORT_DIR)/ee_printf.c \
+            $(PORT_DIR)/rocket-manycore.c \
+	    $(PORT_DIR)/manycore_coremark.vec.c
+
+PORT_OBJS = $(PORT_SRCS:.c=.o)
+
 vpath %.c $(PORT_DIR)
 vpath %.s $(PORT_DIR)
 
@@ -114,6 +125,13 @@ port_pre% port_post% :
 
 port_prebuild :
 	make -C $(ROCKET_PATH)/rocket-chip/riscv-tools/riscv-tests/benchmarks/ crt.o syscalls.o bsg_rocket_rocc.o
+	make -C $(MANYCORE_COREMARK) clean
+	make -C $(MANYCORE_COREMARK) main.riscv
+	make -C $(MANYCORE_COREMARK) main.vec.c 
+	cp      $(MANYCORE_COREMARK)/main.vec.c  $(PORT_DIR)/$(MANYCORE_IMAGE_C_FILE)
+	make -C $(MANYCORE_COREMARK) main.riscv64
+	cp $(MANYCORE_COREMARK)/main.riscv64 $(PORT_DIR)/$(MANYCORE_IMAGE_64BIN_FILE) 
+	make -C $(MANYCORE_COREMARK) clean
 
 ifneq ($(HOST_RUN),1)
 port_postbuild:
@@ -125,4 +143,4 @@ endif
 OPATH = ./
 MKDIR = mkdir -p
 
-PORT_CLEAN=$(PORT_OBJS)
+PORT_CLEAN=$(PORT_OBJS) $(PORT_DIR)/$(MANYCORE_IMAGE_C_FILE) $(PORT_DIR)/$(MANYCORE_IMAGE_64BIN_FILE)
