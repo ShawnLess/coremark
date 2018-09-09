@@ -11,7 +11,11 @@
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "bsg_rocket_rocc.h"
+
+#ifndef MANYCORE_PROG
+   #include "bsg_rocket_rocc.h"
+#endif
+
 #include "bsg_manycore_buffer.h"
 #include "manycore.cfg.h"
 #include "coremark.h"
@@ -33,15 +37,15 @@ typedef struct manycore_results_ {
 	ee_u16 crc, crclist, crcmatrix, crcstate;
 } manycore_results;
 
+#ifndef MANYCORE_PROG
 // Defined in manycores code
 extern core_results        *bresults;
 extern manycore_results    *_mcresult;
-extern int                 *manycore_mem_vec;
 extern unsigned long       *mcmemblk;
 
 // Defined in rocket-manycore.c
 extern manycore_results           mcresults[bsg_tiles_X*bsg_tiles_Y]; // Is this outside the 22-bit address space? 
-
+#endif
 
 //////////////////////////////////////////////////////////////////////
 /* matrix benchmark functions */
