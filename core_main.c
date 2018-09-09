@@ -20,6 +20,7 @@ Original Author: Shay Gal-on
 	This file contains the framework to acquire a block of memory, seed initial parameters, tun t he benchmark and report the results.
 */
 #include "coremark.h"
+#include "rocket-manycore.h"
 
 /* Function: iterate
 	Run the benchmark for a specified number of iterations.
@@ -96,7 +97,9 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 	ee_s16 known_id=-1,total_errors=0;
 	ee_u16 seedcrc=0;
 	CORE_TICKS total_time;
-	core_results results[MULTITHREAD];
+	core_results *results;
+
+	results = MC2RC_PTR(bresults, manycore_mem_vec); // TODO: Remove *? 
 #if (MEM_METHOD==MEM_STACK)
 	ee_u8 stack_memblock[TOTAL_DATA_SIZE*MULTITHREAD];
 #endif
@@ -130,7 +133,9 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 		results[0].seed3=0x66;
 	}
 #if (MEM_METHOD==MEM_STATIC)
-	results[0].memblock[0]=(void *)static_memblk;
+	// DR: Swapped this for our allocated block
+	// results[0].memblock[0]=(void *)static_memblk;
+	results[0].memblock[0] = MC2RC_PTR(mcmemblk, manycore_mem_vec); // TODO Check *?
 	results[0].size=TOTAL_DATA_SIZE;
 	results[0].err=0;
 	#if (MULTITHREAD>1)
@@ -192,25 +197,22 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 			core_init_state(results[0].size,results[i].seed1,results[i].memblock[3]);
 		}
 	}
-	
-	/* automatically determine number of iterations if not set */
-	if (results[0].iterations==0) { 
-		secs_ret secs_passed=0;
-		ee_u32 divisor;
-		results[0].iterations=1;
-		while (secs_passed < (secs_ret)1) {
-			results[0].iterations*=10;
-			start_time();
-			iterate(&results[0]);
-			stop_time();
-			secs_passed=time_in_secs(get_time());
+
+	// DR: init results struct on manycore
+	// Could wrap this in portable_init... but meh
+
+	for(ee_u32 y=0; y < bsg_tiles_Y; ++y){
+		for(ee_u32 x=0; x < bsg_tiles_X; ++x){
+			mcrocket_init(&mcresults[y*bsg_tiles_X + x]);
+#ifndef DMA_LOAD
+			bsg_rocc_load_manycore(y, x);
+#else
+			bsg_rocc_dma_load_manycore_nb(y, x);
+			bsg_rocket_fence( );
+#endif
 		}
-		/* now we know it executes for at least 1 sec, set actual run time at about 10 secs */
-		divisor=(ee_u32)secs_passed;
-		if (divisor==0) /* some machines cast float to int as 0 since this conversion is not defined by ANSI, but we know at least one second passed */
-			divisor=1;
-		results[0].iterations*=1+10/divisor;
 	}
+
 	/* perform actual benchmark */
 	start_time();
 #if (MULTITHREAD>1)
@@ -226,10 +228,29 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 		core_stop_parallel(&results[i]);
 	}
 #else
-	iterate(&results[0]);
+
+	// Start the tiles!
+	for(ee_u32 y=0; y < bsg_tiles_Y; ++y){
+		for(ee_u32 x=0; x < bsg_tiles_X; ++x){
+			bsg_rocc_unfreeze(y, x);
+		}
+	}
+
+	// Run!
+	// iterate(&results[0]);
+
+	for(ee_u32 y=0; y < bsg_tiles_Y; ++y){
+		for(ee_u32 x=0; x < bsg_tiles_X; ++x){
+			coremark_rocc_poll(&(mcresults[y*bsg_tiles_X + x].done), 10000);
+		}
+	}
 #endif
 	stop_time();
 	total_time=get_time();
+
+	// DR: Read results back into struct
+	mcrocket_unload(results, &mcresults[0]);
+
 	/* get a function of the input to report */
 	seedcrc=crc16(results[0].seed1,seedcrc);
 	seedcrc=crc16(results[0].seed2,seedcrc);

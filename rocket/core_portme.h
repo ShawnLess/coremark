@@ -130,7 +130,7 @@ typedef ee_u32 CORE_TICKS;
 	MEM_STACK - to allocate the data block on the stack (NYI).
 */
 #ifndef MEM_METHOD
-#define MEM_METHOD MEM_STATIC
+#define MEM_METHOD MEM_STACK
 #endif
 
 /* Configuration : MULTITHREAD

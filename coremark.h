@@ -20,6 +20,9 @@ Original Author: Shay Gal-on
 	This file contains  declarations of the various benchmark functions.
 */
 
+#ifndef __COREMARK_H
+#define __COREMARK_H
+
 /* Configuration: TOTAL_DATA_SIZE
 	Define total size for data algorithms will operate on
 */
@@ -172,3 +175,4 @@ ee_u16 core_bench_state(ee_u32 blksize, ee_u8 *memblock,
 ee_u32 core_init_matrix(ee_u32 blksize, void *memblk, ee_s32 seed, mat_params *p);
 ee_u16 core_bench_matrix(mat_params *p, ee_s16 seed, ee_u16 crc);
 
+#endif
