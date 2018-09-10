@@ -13,8 +13,6 @@
 
 //////////////////////////////////////////////////////////////////////
 #include <inttypes.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #ifndef MANYCORE_PROG
    #include "bsg_rocket_rocc.h"
@@ -47,7 +45,7 @@ typedef struct manycore_results_ {
 
 #ifndef MANYCORE_PROG
 // Defined in manycores code
-extern core_results        *bresults;
+extern core_results        bresults;
 extern manycore_results    *_mcresult;
 extern unsigned long       *mcmemblk;
 
