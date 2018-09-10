@@ -215,13 +215,13 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 	}
 	// DR: init results struct on manycore
 	// Could wrap this in portable_init... but meh
-        for(ee_u32 y=0; y < bsg_tiles_Y; ++y){
-                for(ee_u32 x=0; x < bsg_tiles_X; ++x){
-			if((uint64_t)&mcresults[y*bsg_tiles_X + x] > (1<< 21)){
+        for(ee_u32 y=0; y < Y_TILES; ++y){
+                for(ee_u32 x=0; x < X_TILES; ++x){
+			if((uint64_t)&mcresults[y*X_TILES + x] > (1<< 21)){
 				ee_printf("Error! pointer to manycore_results struct is outside address space of tile!\n");
 			}
 
-			_mcresult = &mcresults[y*bsg_tiles_X + x];
+			_mcresult = &mcresults[y*X_TILES + x];
 #ifndef DMA_LOAD
 			bsg_rocc_load_manycore(y, x);
 #else
@@ -248,8 +248,8 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 #else
 
 	// Start the tiles!
-	for(ee_u32 y=0; y < bsg_tiles_Y; ++y){
-		for(ee_u32 x=0; x < bsg_tiles_X; ++x){
+	for(ee_u32 y=0; y < Y_TILES; ++y){
+		for(ee_u32 x=0; x < X_TILES; ++x){
 			bsg_rocc_unfreeze(y, x);
 		}
 	}
@@ -257,9 +257,9 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 	// Run!
 	//iterate(&results[0]);
 
-	for(ee_u32 y=0; y < bsg_tiles_Y; ++y){
-		for(ee_u32 x=0; x < bsg_tiles_X; ++x){
-			coremark_rocc_poll(&(mcresults[y*bsg_tiles_X + x].done), 10000);
+	for(ee_u32 y=0; y < Y_TILES; ++y){
+		for(ee_u32 x=0; x < X_TILES; ++x){
+			coremark_rocc_poll(&(mcresults[y*X_TILES + x].done), 10000);
 		}
 	}
 #endif
