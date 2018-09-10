@@ -101,8 +101,8 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
         //core_results results[MULTITHREAD];
 	core_results *results;
 
-	results = MC2RC_PTR(&bresult, manycore_mem_vect);
-
+	results = (core_results *) MC2RC_PTR(&bresult, manycore_mem_vect);
+        
 #if (MEM_METHOD==MEM_STACK)
 	ee_u8 stack_memblock[TOTAL_DATA_SIZE*MULTITHREAD];
 #endif
