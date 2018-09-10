@@ -37,7 +37,13 @@ ee_s16 matrix_test(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B, MATDAT val);
 ee_s16 matrix_sum(ee_u32 N, MATRES *C, MATDAT clipval);
 void matrix_mul_const(ee_u32 N, MATRES *C, MATDAT *A, MATDAT val);
 void matrix_mul_vect(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B);
+
+#ifndef MANYCORE_PROG
 void matrix_mul_matrix(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B);
+#else
+void matrix_mul_matrix(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B, int extract_func);
+#endif
+
 void matrix_mul_matrix_bitextract(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B);
 void matrix_add_const(ee_u32 N, MATDAT *A, MATDAT val);
 
@@ -132,12 +138,25 @@ ee_s16 matrix_test(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B, MATDAT val) {
 #if CORE_DEBUG
 	printmatC(C,N,"matrix_mul_vect");
 #endif
+
+#ifndef MANYCORE_PROG
 	matrix_mul_matrix(N,C,A,B);
+#else
+	matrix_mul_matrix(N,C,A,B,0);
+#endif
 	crc=crc16(matrix_sum(N,C,clipval),crc);
 #if CORE_DEBUG
 	printmatC(C,N,"matrix_mul_matrix");
 #endif
+
+//Shaolin refactored to save space. 
+#ifndef MANYCORE_PROG
 	matrix_mul_matrix_bitextract(N,C,A,B);
+#else
+        matrix_mul_matrix(N,C,A,B,1);
+#endif
+
+
 	crc=crc16(matrix_sum(N,C,clipval),crc);
 #if CORE_DEBUG
 	printmatC(C,N,"matrix_mul_matrix_bitextract");
@@ -278,19 +297,33 @@ void matrix_mul_vect(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B) {
 	Multiply a matrix by a matrix.
 	Basic code is used in many algorithms, mostly with minor changes such as scaling.
 */
-void matrix_mul_matrix(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B) {
+#ifndef MANYCORE_PROG
+void matrix_mul_matrix(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B )
+#else
+void matrix_mul_matrix(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B , int extract_func)
+#endif
+ {
 	ee_u32 i,j,k;
 	for (i=0; i<N; i++) {
 		for (j=0; j<N; j++) {
 			C[i*N+j]=0;
 			for(k=0;k<N;k++)
-			{
-				C[i*N+j]+=(MATRES)A[i*N+k] * (MATRES)B[k*N+j];
+			{     // Shaolin--Refactored to save space.
+                              // C[i*N+j]+=(MATRES)A[i*N+k] * (MATRES)B[k*N+j]; 
+                                #ifndef MANYCORE_PROG
+                                C[i*N+j]+=(MATRES)A[i*N+k] * (MATRES)B[k*N+j]; 
+                                #else
+                                MATRES tmp=(MATRES)A[i*N+k] * (MATRES)B[k*N+j];
+                                if (extract_func)
+                                        tmp = bit_extract(tmp,2,4)*bit_extract(tmp,5,7);
+                                C[i*N+j]+=tmp;
+                                #endif
 			}
 		}
 	}
 }
 
+#ifndef MANYCORE_PROG
 /* Function: matrix_mul_matrix_bitextract
 	Multiply a matrix by a matrix, and extract some bits from the result.
 	Basic code is used in many algorithms, mostly with minor changes such as scaling.
@@ -308,3 +341,4 @@ void matrix_mul_matrix_bitextract(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B) {
 		}
 	}
 }
+#endif
