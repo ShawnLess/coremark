@@ -73,7 +73,7 @@ SEPARATE_COMPILE=1
 OBJOUT 	= -o
 
 ifneq ($(HOST_RUN),1)
-LFLAGS = $(RV_BENCH_PATH)/syscalls.o $(RV_BENCH_PATH)/bsg_rocket_rocc.o -nostartfiles -ffast-math -fno-builtin-printf -lc -lgcc -lm  -T $(RV_LINK_SCRIPT) -L $(RV_BENCH_PATH) -Wl,-Map,link.map,--just-symbols=$(PORT_DIR)/$(MANYCORE_IMAGE_64BIN_FILE)
+LFLAGS = $(RV_BENCH_PATH)/syscalls.o -nostartfiles -ffast-math -fno-builtin-printf -lc -lgcc -lm  -T $(RV_LINK_SCRIPT) -L $(RV_BENCH_PATH) -Wl,-Map,link.map,--just-symbols=$(PORT_DIR)/$(MANYCORE_IMAGE_64BIN_FILE)
 else
 LFLAGS  = -lc -lgcc
 endif
@@ -91,7 +91,7 @@ PORT_SRCS = $(PORT_DIR)/core_portme.c \
             $(PORT_DIR)/rocket-manycore.c \
 	    $(PORT_DIR)/manycore_coremark.vec.c
 
-PORT_OBJS = $(PORT_SRCS:.c=.o)
+PORT_OBJS = $(PORT_SRCS:.c=.o) $(PORT_DIR)/bsg_rocket_rocc.o
 
 vpath %.c $(PORT_DIR)
 vpath %.s $(PORT_DIR)
@@ -107,6 +107,9 @@ RUN = echo "Please set LOAD to the process of running the executable (e.g. via j
 
 OEXT = .o
 EXE = .bin
+
+$(OPATH)$(PORT_DIR)/bsg_rocket_rocc.o : $(ROCKET_BENCH_PATH)/bsg_rocket_manycore_common/bsg_rocket_rocc.c
+	$(CC) $(CFLAGS) $(XCFLAGS) -DIMEM_INIT_LEN=0x1000 $(COUT) $< $(OBJOUT) $@
 
 $(OPATH)$(PORT_DIR)/%$(OEXT) : %.c
 	$(CC) $(CFLAGS) $(XCFLAGS) $(COUT) $< $(OBJOUT) $@
@@ -124,7 +127,7 @@ $(OPATH)$(PORT_DIR)/%$(OEXT) : %.s
 port_pre% port_post% : 
 
 port_prebuild :
-	make -C $(ROCKET_PATH)/rocket-chip/riscv-tools/riscv-tests/benchmarks/ crt.o syscalls.o bsg_rocket_rocc.o
+	PATH=$(PATH):$(RV_TOOL_PATH) make -C $(ROCKET_PATH)/rocket-chip/riscv-tools/riscv-tests/benchmarks/ crt.o syscalls.o 
 	make -C $(MANYCORE_COREMARK) clean
 	make -C $(MANYCORE_COREMARK) main.riscv
 	make -C $(MANYCORE_COREMARK) main.vec.c 
