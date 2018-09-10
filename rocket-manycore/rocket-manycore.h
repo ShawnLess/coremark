@@ -45,12 +45,12 @@ typedef struct manycore_results_ {
 
 #ifndef MANYCORE_PROG
 // Defined in manycores code
-extern core_results        bresults;
+extern core_results        bresult;
 extern manycore_results    *_mcresult;
 extern unsigned long       *mcmemblk;
 
 // Defined in rocket-manycore.c
-extern manycore_results           mcresults[bsg_tiles_X*bsg_tiles_Y]; // Is this outside the 22-bit address space? 
+extern manycore_results    mcresults[bsg_tiles_X*bsg_tiles_Y]; // Is this outside the 22-bit address space? 
 
 // Defined in manycore_coremark.vec.c
 extern int manycore_mem_vect[];

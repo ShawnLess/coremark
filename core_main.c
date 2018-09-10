@@ -101,7 +101,7 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
         //core_results results[MULTITHREAD];
 	core_results *results;
 
-	results = MC2RC_PTR(&bresults, manycore_mem_vect);
+	results = MC2RC_PTR(&bresult, manycore_mem_vect);
 
 #if (MEM_METHOD==MEM_STACK)
 	ee_u8 stack_memblock[TOTAL_DATA_SIZE*MULTITHREAD];
@@ -138,7 +138,7 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 #if (MEM_METHOD==MEM_STATIC)
 	// DR: Swapped this for our allocated block
 	//results[0].memblock[0]=(void *)static_memblk;
-	results[0].memblock[0] = MC2RC_PTR(mcmemblk, manycore_mem_vect); // TODO Check *?
+	results[0].memblock[0] = MC2RC_PTR(mcmemblk, manycore_mem_vect);
 	results[0].size=TOTAL_DATA_SIZE;
 	results[0].err=0;
 	#if (MULTITHREAD>1)
