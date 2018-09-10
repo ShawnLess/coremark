@@ -42,7 +42,7 @@ LD		= $(RISCV_GCC) -T $(BSG_MANYCORE_DIR)/software/spmd/common/test.ld  -Wl,-Map
 AS		= $(RISCV_GCC)  -D__ASSEMBLY__=1
 # Flag : CFLAGS
 #	Use this flag to define compiler options. Note, you can add compiler options from the command line using XCFLAGS="other flags"
-PORT_CFLAGS = -O0 -g $(RISCV_GCC_OPTS)
+PORT_CFLAGS = -O0 -g $(RISCV_GCC_OPTS) -DMANYCORE_PROG
 
 ifneq ($(DUMP_CONTEXT),0)
 	PORT_CFLAGS += -DDUMP_CONTEXT=1
