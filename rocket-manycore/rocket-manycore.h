@@ -45,7 +45,7 @@ typedef struct manycore_results_ {
 
 #ifndef MANYCORE_PROG
 // Defined in manycores code
-extern core_results        bresult;
+extern core_results        * bresult;
 extern manycore_results    *_mcresult;
 extern unsigned long       *mcmemblk;
 
@@ -65,5 +65,5 @@ int coremark_rocc_poll(void *vp, int wait_limit);
 
 #define MANYCORE_ALIGN_MEM(x) (void *)(4 + (((ee_u32)(x) - 1) & ~3))
 #define ROCKET_ALIGN_MEM(x) (void *)(4 + (((unsigned long long )(x) - 1) & ~3))
-#define MC2RC_PTR(x, p) (void *)((unsigned long long)(x) + (p))
+#define MC2RC_PTR(x, p) ((unsigned long long )(x) + (unsigned long long )(p))
 #endif
