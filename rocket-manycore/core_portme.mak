@@ -73,7 +73,8 @@ SEPARATE_COMPILE=1
 OBJOUT 	= -o
 
 ifneq ($(HOST_RUN),1)
-LFLAGS = $(RV_BENCH_PATH)/syscalls.o -nostartfiles -ffast-math -fno-builtin-printf -lc -lgcc -lm  -T $(RV_LINK_SCRIPT) -L $(RV_BENCH_PATH) -Wl,-Map,link.map,--just-symbols=$(PORT_DIR)/$(MANYCORE_IMAGE_64BIN_FILE)
+#LFLAGS = $(RV_BENCH_PATH)/syscalls.o -nostartfiles -ffast-math -fno-builtin-printf -lc -lgcc -lm  -T $(RV_LINK_SCRIPT) -L $(RV_BENCH_PATH) -Wl,-Map,link.map,--just-symbols=$(PORT_DIR)/$(MANYCORE_IMAGE_64BIN_FILE)
+LFLAGS = $(RV_BENCH_PATH)/syscalls.o -nostartfiles -ffast-math -fno-builtin-printf -lc -lgcc -lm  -T $(RV_LINK_SCRIPT) -L $(RV_BENCH_PATH) -Wl,-Map,link.map,--defsym,bresult=0x1004,--defsym,_mcresult=0x1000,--defsym,mcmemblk=0x1048
 else
 LFLAGS  = -lc -lgcc
 endif
