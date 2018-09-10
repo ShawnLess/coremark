@@ -8,6 +8,10 @@
 #define _ROCKET_MANYCORE_H_
 
 //////////////////////////////////////////////////////////////////////
+#define X_TILES 1
+#define Y_TILES 1
+
+//////////////////////////////////////////////////////////////////////
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,16 +29,20 @@ typedef struct manycore_results_ {
         // the Rocket memory space. When manycore stores data back to the
         // rocket, it should add the base_addr to the buffer to get the right
         // address
-        //ee_u32 addr; // TODO: Double check this is in tile memory space!!!
+
+        // We can't use the 'extern int manycore_mem_vect[] because the *.vec.c would be 
+        // compiled with manycore program.
+        ee_u32 base_addr; // TODO: Double check this is in tile memory space!!!
         // Return value
         ee_u32 result;
 	// Done Flag
         ee_u32 done;
 
 	// Write these when iterations are complete!!!
-	ee_s16 seed1, seed2, seed3;
+	// The RoCC only supports 32bits transter. So all data transtered should be 32bits.
+	ee_s32 seed1, seed2, seed3; //ee_s16 seed1, seed2, seed3;
 	ee_u32 size;
-	ee_u16 crc, crclist, crcmatrix, crcstate;
+	ee_u32 crc, crclist, crcmatrix, crcstate; //ee_u16 crc, crclist, crcmatrix, crcstate;
 } manycore_results;
 
 #ifndef MANYCORE_PROG
@@ -45,6 +53,9 @@ extern unsigned long       *mcmemblk;
 
 // Defined in rocket-manycore.c
 extern manycore_results           mcresults[bsg_tiles_X*bsg_tiles_Y]; // Is this outside the 22-bit address space? 
+
+// Defined in manycore_coremark.vec.c
+extern int manycore_mem_vect[];
 #endif
 
 //////////////////////////////////////////////////////////////////////

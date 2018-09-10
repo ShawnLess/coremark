@@ -97,10 +97,12 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 	ee_s16 known_id=-1,total_errors=0;
 	ee_u16 seedcrc=0;
 	CORE_TICKS total_time;
+
+        //core_results results[MULTITHREAD];
 	core_results *results;
 
 	//_mcptr = MC2RC_PTR(&(_mcresult), manycore_mem_vec);
-	results = MC2RC_PTR(bresults, manycore_mem_vect); // TODO: Remove *? 
+	results = MC2RC_PTR(&bresults, manycore_mem_vect); // TODO: Remove *? 
 #if (MEM_METHOD==MEM_STACK)
 	ee_u8 stack_memblock[TOTAL_DATA_SIZE*MULTITHREAD];
 #endif
