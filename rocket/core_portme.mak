@@ -19,11 +19,11 @@
 #
 HOST_RUN=0
 
-ROCKET_PATH ?= $(shell readlink -m ../celerity/bsg_riscv/)
-ROCKET_BENCH_PATH ?= $(shell readlink -m ../bsg_rocket/common/benchmark)
+ROCKET_PATH ?= /home/dustinar/Research/repositories/git/celerity/bsg_riscv/
+ROCKET_BENCH_PATH=$(shell readlink -m ../bsg_rocket/common/benchmark)
 
 RV_TOOL_PATH=$(ROCKET_PATH)/riscv-install/bin/
-RV_BENCH_PATH=$(ROCKET_PATH)../bsg_manycore/software/spmd/
+RV_BENCH_PATH=$(ROCKET_PATH)/rocket-chip/riscv-tools/riscv-tests/benchmarks/
 RV_COMMON_PATH=$(RV_BENCH_PATH)/common/
 RV_LINK_SCRIPT=$(RV_COMMON_PATH)/test.ld
 
@@ -32,7 +32,7 @@ RV_CC=$(RV_TOOL_PATH)/$(RV_PREFIX)-gcc
 RV_LD=$(RV_TOOL_PATH)/$(RV_PREFIX)-ld
 RV_AS=$(RV_TOOL_PATH)/$(RV_PREFIX)-as
 RV_HEX=$(RV_TOOL_PATH)/elf2hex 
-RV_CFLAGS= -static -std=gnu99 -Os -march=RV32IMA -m32 -fno-unroll-loops -ffast-math -fno-common -fno-builtin-printf -DPREALLOCATE=0 -DHOST_DEBUG=0 -DHAS_FLOAT=0  -DMEM_METHOD=MEM_STATIC -fno-exceptions -s -fno-inline-functions -fmerge-all-constants -ffunction-sections -fdata-sections -Wl,--gc-sections
+RV_CFLAGS= -static -std=gnu99 -O2 -ffast-math -fno-common -fno-builtin-printf -DPREALLOCATE=0 -DHOST_DEBUG=0
 #############################################
 #File : core_portme.mak
 
@@ -51,13 +51,13 @@ endif
 # Flag : CFLAGS
 #	Use this flag to define compiler options. Note, you can add compiler options from the command line using XCFLAGS="other flags"
 ifneq ($(HOST_RUN),1)
-PORT_CFLAGS =  $(RV_CFLAGS) -march=RV32IMA -m32
+PORT_CFLAGS = -O0 -g  $(RV_CFLAGS) 
 else
-PORT_CFLAGS = -DHOST_RUN=1 
+PORT_CFLAGS = -O0 -g -DHOST_RUN=1 
 endif
 
 FLAGS_STR = "$(PORT_CFLAGS) $(XCFLAGS) $(XLFLAGS) $(LFLAGS_END)"
-CFLAGS = $(PORT_CFLAGS) -I$(PORT_DIR) -I. -DFLAGS_STR=\"$(FLAGS_STR)\"  
+CFLAGS = $(PORT_CFLAGS) -I$(PORT_DIR) -I. -DFLAGS_STR=\"$(FLAGS_STR)\" 
 #Flag : LFLAGS_END
 #	Define any libraries needed for linking or other flags that should come at the end of the link line (e.g. linker scripts). 
 #	Note : On certain platforms, the default clock_gettime implementation is supported but requires linking of librt.
@@ -67,9 +67,9 @@ SEPARATE_COMPILE=1
 OBJOUT 	= -o
 
 ifneq ($(HOST_RUN),1)
-LFLAGS 	= -march=RV32IMA -m32 -nostartfiles -ffast-math -fno-builtin-printf -lc -lgcc -lm  -T $(RV_LINK_SCRIPT) -L $(RV_COMMON_PATH) -Wl,-Map,link.map  
+LFLAGS 	= $(RV_BENCH_PATH)/syscalls.o -nostartfiles -ffast-math -fno-builtin-printf -lc -lgcc -lm  -T $(RV_LINK_SCRIPT) -L $(RV_BENCH_PATH) -Wl,-Map,link.map 
 else
-LFLAGS  = -lc -lgcc 
+LFLAGS  = -lc -lgcc
 endif
 
 ASFLAGS = 
@@ -115,7 +115,7 @@ $(OPATH)$(PORT_DIR)/%$(OEXT) : %.s
 port_pre% port_post% : 
 
 port_prebuild :
-	make -C $(ROCKET_PATH)../bsg_manycore/software/spmd/ common/crt.o
+	make -C $(ROCKET_PATH)/rocket-chip/riscv-tools/riscv-tests/benchmarks/ crt.o syscalls.o
 
 ifneq ($(HOST_RUN),1)
 port_postbuild:

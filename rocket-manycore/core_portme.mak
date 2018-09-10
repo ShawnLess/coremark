@@ -18,12 +18,13 @@
 #  Porting Variables.
 #
 # Please use the question mark notation and stop overriding my environment variables
+HOST_RUN=0
+
 ROCKET_PATH ?= $(shell readlink -m ../celerity/bsg_riscv/)
 ROCKET_BENCH_PATH ?= $(shell readlink -m ../celerity/bsg_rocket/common/benchmark)
-
 MANYCORE_COREMARK ?=$(shell readlink -m ../celerity/bsg_manycore/software/spmd/coremark)
 
-MANYCORE_IMAGE_NAME = manycore_coremark
+MANYCORE_IMAGE_NAME =manycore_coremark
 MANYCORE_IMAGE_C_FILE=$(MANYCORE_IMAGE_NAME).vec.c
 MANYCORE_IMAGE_64BIN_FILE=$(MANYCORE_IMAGE_NAME).riscv64
 
@@ -37,8 +38,7 @@ RV_CC=$(RV_TOOL_PATH)/$(RV_PREFIX)-gcc
 RV_LD=$(RV_TOOL_PATH)/$(RV_PREFIX)-ld
 RV_AS=$(RV_TOOL_PATH)/$(RV_PREFIX)-as
 RV_HEX=$(RV_TOOL_PATH)/elf2hex 
-RV_CFLAGS=-static -std=gnu99 -O2 -ffast-math -fno-common -fno-builtin-printf -DPREALLOCATE=0 -DHOST_DEBUG=0 \
-
+RV_CFLAGS=-static -std=gnu99 -O2 -ffast-math -fno-common -fno-builtin-printf -DPREALLOCATE=0 -DHOST_DEBUG=0
 #############################################
 #File : core_portme.mak
 
@@ -57,7 +57,7 @@ endif
 # Flag : CFLAGS
 #	Use this flag to define compiler options. Note, you can add compiler options from the command line using XCFLAGS="other flags"
 ifneq ($(HOST_RUN),1)
-PORT_CFLAGS = -g  $(RV_CFLAGS) 
+PORT_CFLAGS = -O0 -g  $(RV_CFLAGS) 
 else
 PORT_CFLAGS = -O0 -g -DHOST_RUN=1 
 endif
@@ -73,7 +73,7 @@ SEPARATE_COMPILE=1
 OBJOUT 	= -o
 
 ifneq ($(HOST_RUN),1)
-LFLAGS 	= $(RV_BENCH_PATH)/bsg_rocket_rocc.o $(RV_BENCH_PATH)/syscalls.o -nostartfiles -ffast-math -fno-builtin-printf -lc -lgcc -lm  -T $(RV_LINK_SCRIPT) -L $(RV_BENCH_PATH) -Wl,-Map,link.map,--just-symbols=$(PORT_DIR)/$(MANYCORE_IMAGE_64BIN_FILE)
+LFLAGS = $(RV_BENCH_PATH)/syscalls.o $(RV_BENCH_PATH)/bsg_rocket_rocc.o -nostartfiles -ffast-math -fno-builtin-printf -lc -lgcc -lm  -T $(RV_LINK_SCRIPT) -L $(RV_BENCH_PATH) -Wl,-Map,link.map,--just-symbols=$(PORT_DIR)/$(MANYCORE_IMAGE_64BIN_FILE)
 else
 LFLAGS  = -lc -lgcc
 endif

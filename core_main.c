@@ -99,8 +99,7 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 	CORE_TICKS total_time;
 	core_results *results;
 
-	//_mcptr = MC2RC_PTR(&(_mcresult), manycore_mem_vec);
-	results = MC2RC_PTR(bresults, manycore_mem_vect); // TODO: Remove *? 
+	results = MC2RC_PTR(&bresults, manycore_mem_vect);
 #if (MEM_METHOD==MEM_STACK)
 	ee_u8 stack_memblock[TOTAL_DATA_SIZE*MULTITHREAD];
 #endif
@@ -135,7 +134,7 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 	}
 #if (MEM_METHOD==MEM_STATIC)
 	// DR: Swapped this for our allocated block
-	// results[0].memblock[0]=(void *)static_memblk;
+	//results[0].memblock[0]=(void *)static_memblk;
 	results[0].memblock[0] = MC2RC_PTR(mcmemblk, manycore_mem_vect); // TODO Check *?
 	results[0].size=TOTAL_DATA_SIZE;
 	results[0].err=0;
@@ -198,19 +197,28 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 			core_init_state(results[0].size,results[i].seed1,results[i].memblock[3]);
 		}
 	}
-
+	/* automatically determine number of iterations if not set */
+	if (results[0].iterations==0) { 
+		secs_ret secs_passed=0;
+		ee_u32 divisor;
+		results[0].iterations=1;
+		while (secs_passed < (secs_ret)1) {
+			results[0].iterations*=10;
+			start_time();
+			iterate(&results[0]);
+			stop_time();
+			secs_passed=time_in_secs(get_time());
+		}
+	}
 	// DR: init results struct on manycore
 	// Could wrap this in portable_init... but meh
-
         for(ee_u32 y=0; y < bsg_tiles_Y; ++y){
                 for(ee_u32 x=0; x < bsg_tiles_X; ++x){
 			if((uint64_t)&mcresults[y*bsg_tiles_X + x] > (1<< 21)){
-				printf("Error! pointer to manycore_results struct is outside address space of tile!\n");
-				exit(-1);
+				ee_printf("Error! pointer to manycore_results struct is outside address space of tile!\n");
 			}
 
 			_mcresult = &mcresults[y*bsg_tiles_X + x];
-                        //mcrocket_init(_mcinit, &mcresults[y*bsg_tiles_X + x]);
 #ifndef DMA_LOAD
 			bsg_rocc_load_manycore(y, x);
 #else
@@ -218,7 +226,7 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 			bsg_rocket_fence( );
 #endif
 		}
-        }
+	}
 
 	/* perform actual benchmark */
 	start_time();
@@ -244,7 +252,7 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 	}
 
 	// Run!
-	// iterate(&results[0]);
+	//iterate(&results[0]);
 
 	for(ee_u32 y=0; y < bsg_tiles_Y; ++y){
 		for(ee_u32 x=0; x < bsg_tiles_X; ++x){
