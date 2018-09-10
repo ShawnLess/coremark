@@ -220,8 +220,10 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 			if((uint64_t)&mcresults[y*X_TILES + x] > (1<< 21)){
 				ee_printf("Error! pointer to manycore_results struct is outside address space of tile!\n");
 			}
-
-			_mcresult = &mcresults[y*X_TILES + x];
+                        // Shaolin.
+                        // Careful -- Manycore uses 32bits pointr while Rocket uses 64bits
+                        ee_u32 * p_mcresult = (ee_u32 *) MC2RC_PTR( (&_mcresult), manycore_mem_vect);
+		               * p_mcresult = (ee_u32  )( &mcresults[y*X_TILES + x] );
 #ifndef DMA_LOAD
 			bsg_rocc_load_manycore(y, x);
 #else
