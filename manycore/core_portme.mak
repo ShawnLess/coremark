@@ -17,6 +17,7 @@
 #  Porting Variables.
 #
 export PROG_NAME=coremark
+
 include ../Makefile.include
 
 #############################################
@@ -36,7 +37,7 @@ LD		= $(RISCV_GCC) -T $(BSG_MANYCORE_DIR)/software/spmd/common/test.ld
 AS		= $(RISCV_GCC)  -D__ASSEMBLY__=1
 # Flag : CFLAGS
 #	Use this flag to define compiler options. Note, you can add compiler options from the command line using XCFLAGS="other flags"
-PORT_CFLAGS = -O0 -g $(RISCV_GCC_OPTS) 
+PORT_CFLAGS = -O0 -g $(RISCV_GCC_OPTS) -DMANYCORE 
 FLAGS_STR = "$(PORT_CFLAGS) $(XCFLAGS) $(XLFLAGS) $(LFLAGS_END)"
 CFLAGS = $(PORT_CFLAGS) -I$(PORT_DIR) -I. -DFLAGS_STR=\"$(FLAGS_STR)\" 
 #Flag : LFLAGS_END
