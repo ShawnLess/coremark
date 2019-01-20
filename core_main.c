@@ -39,6 +39,9 @@ void *iterate(void *pres) {
 	ee_u16 crc;
 	core_results *res=(core_results *)pres;
 	ee_u32 iterations=res->iterations;
+
+        ee_printf("Manycore>>  begin to iterate, iteration number =%d.\n", iterations);
+
 	res->crc=0;
 	res->crclist=0;
 	res->crcmatrix=0;
@@ -106,7 +109,7 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
         /* only runs on core 0 */
         if( (bsg_x > 0) ||  (bsg_y > 0) ) { bsg_wait_while( 1 ); };
 
-        ee_printf("x/y corrdination setting completed.\n");
+        ee_printf("Manycore>>  x/y corrdination setting completed.\n");
 
 	/* First some checks to make sure benchmark will run ok */
 	if (sizeof(struct list_head_s)>128) {
@@ -186,6 +189,8 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 			j++;
 		}
 	}
+
+        ee_printf("Manycore>>  start to initilize  benchmark data.\n");
 	/* call inits */
 	for (i=0 ; i<MULTITHREAD; i++) {
 		if (results[i].execs & ID_LIST) {
@@ -199,6 +204,7 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 		}
 	}
 	
+        ee_printf("Manycore>>  finished benchmark initialization.\n");
 	/* automatically determine number of iterations if not set */
 	if (results[0].iterations==0) { 
 		secs_ret secs_passed=0;
