@@ -17,6 +17,7 @@ Original Author: Shay Gal-on
 */
 #include "coremark.h"
 #include "core_portme.h"
+#include "bsg_set_tile_x_y.h"
 
 #if VALIDATION_RUN
 	volatile ee_s32 seed1_volatile=0x3415;
@@ -42,6 +43,9 @@ Original Author: Shay Gal-on
 */
 CORETIMETYPE barebones_clock() {
 //	#error "You must implement a method to measure time in barebones_clock()! This function should return current time.\n"
+        static CORETIMETYPE fake_timer=0;
+        fake_timer += 100;
+        return fake_timer;
 }
 /* Define : TIMER_RES_DIVIDER
 	Divider to trade off timer resolution and total time that can be measured.
@@ -116,6 +120,9 @@ void portable_init(core_portable *p, int *argc, char *argv[])
 		ee_printf("ERROR! Please define ee_u32 to a 32b unsigned type!\n");
 	}
 	p->portable_id=1;
+         
+        //Initial the Manycore ID
+        bsg_set_tile_x_y();
 }
 /* Function : portable_fini
 	Target specific final code 

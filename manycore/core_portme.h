@@ -18,8 +18,12 @@ Original Author: Shay Gal-on
 /* Topic : Description
 	This file contains configuration constants required to execute on different platforms
 */
+#include "bsg_manycore.h"
+#include "bsg_set_tile_x_y.h"
+
 #ifndef CORE_PORTME_H
 #define CORE_PORTME_H
+
 /************************/
 /* Data types and settings */
 /************************/
@@ -71,7 +75,7 @@ Original Author: Shay Gal-on
  #define COMPILER_FLAGS FLAGS_STR /* "Please put compiler flags here (e.g. -o3)" */
 #endif
 #ifndef MEM_LOCATION 
- #define MEM_LOCATION "STACK"
+ #define MEM_LOCATION "STATIC"
 #endif
 
 /* Data Types :
@@ -82,7 +86,7 @@ Original Author: Shay Gal-on
 */
 /*********************************************************/
 /* Shaolin MOD */
-#define size_t long
+#define size_t int
 #define CLOCKS_PER_SEC 1
 /*********************************************************/
 typedef signed short ee_s16;

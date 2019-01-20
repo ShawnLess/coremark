@@ -16,6 +16,7 @@
 ############################################
 #  Porting Variables.
 #
+export PROG_NAME=coremark
 include ../Makefile.include
 
 #############################################
@@ -29,7 +30,7 @@ OUTFLAG= -o
 CC 		= $(RISCV_GCC)
 # Flag : LD
 #	Use this flag to define compiler to use
-LD		= $(RISCV_GCC) -T $(BSG_MANYCORE_DIR)/software/spmd/common/test.ld
+LD		= $(RISCV_GCC) -T $(BSG_MANYCORE_DIR)/software/spmd/common/test.ld 
 # Flag : AS
 #	Use this flag to define compiler to use
 AS		= $(RISCV_GCC)  -D__ASSEMBLY__=1
@@ -55,8 +56,10 @@ LFLAGS_END =
 # 	Port specific source files can be added here
 #	You may also need cvt.c if the fcvt functions are not provided as intrinsics by your compiler!
 PORT_SRCS = $(PORT_DIR)/core_portme.c $(PORT_DIR)/ee_printf.c 
-PORT_OBJS = $(PORT_DIR)/core_portme.o $(PORT_DIR)/ee_printf.o
-vpath %.c $(PORT_DIR)
+PORT_OBJS = $(PORT_DIR)/core_portme.o $(PORT_DIR)/ee_printf.o  \
+	    $(PORT_DIR)/bsg_set_tile_x_y.o
+
+vpath %.c $(PORT_DIR)  $(BSG_MANYCORE_DIR)/software/bsg_manycore/lib
 vpath %.s $(PORT_DIR)
 
 # Flag : LOAD
@@ -69,7 +72,7 @@ LOAD = echo "Please set LOAD to the process of loading the executable to the fla
 RUN = echo "Please set LOAD to the process of running the executable (e.g. via jtag, or board reset)"
 
 OEXT = .o
-EXE = .bin
+EXE = .riscv
 
 $(OPATH)$(PORT_DIR)/%$(OEXT) : %.c
 	$(CC) $(CFLAGS) $(XCFLAGS) $(COUT) $< $(OBJOUT) $@
@@ -90,4 +93,6 @@ port_pre% port_post% :
 # Path to the output folder. Default - current folder.
 OPATH = ./
 MKDIR = mkdir -p
+PORT_CLEAN= -rf $(OPATH)*$(OEXT) $(PORT_DIR)/*$(OEXT) \
+$(OPATH)*.mem $(OPATH)csrc $(OPATH)simv $(OPATH)/simv.daidir $(OPATH)ucli.key $(OPATH)vcdplus.vpd
 

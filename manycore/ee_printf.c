@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+#include "bsg_manycore.h"
+
 #include <coremark.h>
 #include <stdarg.h>
 
@@ -562,6 +564,9 @@ repeat:
 
 void uart_send_char(char c) {
 //#error "You must implement the method uart_send_char to use this file!\n";
+
+bsg_putchar( c );
+
 /*	Output of a char to a UART usually follows the following model:
 	Wait until UART is ready
 	Write char to UART

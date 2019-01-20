@@ -20,7 +20,6 @@ Original Author: Shay Gal-on
 	This file contains the framework to acquire a block of memory, seed initial parameters, tun t he benchmark and report the results.
 */
 #include "coremark.h"
-
 /* Function: iterate
 	Run the benchmark for a specified number of iterations.
 
@@ -102,6 +101,13 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 #endif
 	/* first call any initializations needed */
 	portable_init(&(results[0].port), &argc, argv);
+
+
+        /* only runs on core 0 */
+        if( (bsg_x > 0) ||  (bsg_y > 0) ) { bsg_wait_while( 1 ); };
+
+        ee_printf("x/y corrdination setting completed.\n");
+
 	/* First some checks to make sure benchmark will run ok */
 	if (sizeof(struct list_head_s)>128) {
 		ee_printf("list_head structure too big for comparable data!\n");
