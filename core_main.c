@@ -105,11 +105,6 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 	/* first call any initializations needed */
 	portable_init(&(results[0].port), &argc, argv);
 
-#ifdef MANYCORE
-        /* only runs on core 0 */
-        if( (bsg_x > 0) ||  (bsg_y > 0) ) { bsg_wait_while( 1 ); };
-#endif
-
         ee_printf("Manycore>>  x/y corrdination setting completed.\n");
 
 	/* First some checks to make sure benchmark will run ok */

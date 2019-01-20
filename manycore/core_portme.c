@@ -123,6 +123,9 @@ void portable_init(core_portable *p, int *argc, char *argv[])
          
         //Initial the Manycore ID
         bsg_set_tile_x_y();
+        if( bsg_x >0 || bsg_y >0) { 
+                bsg_wait_while(1);
+        }
 }
 /* Function : portable_fini
 	Target specific final code 

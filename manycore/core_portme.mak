@@ -16,8 +16,6 @@
 ############################################
 #  Porting Variables.
 #
-export PROG_NAME=coremark
-
 include ../Makefile.include
 
 #############################################
