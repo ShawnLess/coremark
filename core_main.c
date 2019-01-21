@@ -35,12 +35,17 @@ static ee_u16 list_known_crc[]   =      {(ee_u16)0xd4b0,(ee_u16)0x3340,(ee_u16)0
 static ee_u16 matrix_known_crc[] =      {(ee_u16)0xbe52,(ee_u16)0x1199,(ee_u16)0x5608,(ee_u16)0x1fd7,(ee_u16)0x0747};
 static ee_u16 state_known_crc[]  =      {(ee_u16)0x5e47,(ee_u16)0x39bf,(ee_u16)0xe5a4,(ee_u16)0x8e3a,(ee_u16)0x8d84};
 IMEM void *iterate(void *pres){
+
+#ifdef  DUMP_CONTEXT
+        bsg_finish(); 
+        bsg_wait_while(1);
+#endif
+
 	ee_u32 i;
 	ee_u16 crc;
 	core_results *res=(core_results *)pres;
 	ee_u32 iterations=res->iterations;
 
-        ee_printf("Manycore>>  begin to iterate, iteration number =%d.\n", iterations);
 
 	res->crc=0;
 	res->crclist=0;
@@ -234,7 +239,8 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 		core_stop_parallel(&results[i]);
 	}
 #else
-	iterate(&results[0]);
+        ee_printf("Manycore>>  begin to iterate, iteration number =%d.\n", results[0].iterations);
+        iterate(&results[0]);
 #endif
 	stop_time();
 	total_time=get_time();

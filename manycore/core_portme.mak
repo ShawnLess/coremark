@@ -109,3 +109,5 @@ OPATH = ./
 MKDIR = mkdir -p
 PORT_CLEAN= -rf $(OPATH)*$(OEXT) $(PORT_DIR)/*$(OEXT) \
 $(OPATH)*.mem $(OPATH)csrc $(OPATH)simv $(OPATH)/simv.daidir $(OPATH)ucli.key $(OPATH)vcdplus.vpd $(OPATH)*.map
+
+include ../../mk/Makefile.tail_rules
