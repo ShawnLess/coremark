@@ -21,6 +21,9 @@ Original Author: Shay Gal-on
 #include "bsg_manycore.h"
 #include "bsg_set_tile_x_y.h"
 
+//Put this macro before variables definition will put the code into instruction memory
+#define IMEM __attribute__ ((section (".imem")))
+
 #ifndef CORE_PORTME_H
 #define CORE_PORTME_H
 

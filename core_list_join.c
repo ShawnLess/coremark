@@ -49,17 +49,17 @@ Topic: Description
 
 /* local functions */
 
-list_head *core_list_find(list_head *list,list_data *info);
-list_head *core_list_reverse(list_head *list);
-list_head *core_list_remove(list_head *item);
-list_head *core_list_undo_remove(list_head *item_removed, list_head *item_modified);
-list_head *core_list_insert_new(list_head *insert_point
+IMEM list_head *core_list_find(list_head *list,list_data *info);
+IMEM list_head *core_list_reverse(list_head *list);
+IMEM list_head *core_list_remove(list_head *item);
+IMEM list_head *core_list_undo_remove(list_head *item_removed, list_head *item_modified);
+IMEM list_head *core_list_insert_new(list_head *insert_point
 	, list_data *info, list_head **memblock, list_data **datablock
 	, list_head *memblock_end, list_data *datablock_end);
 typedef ee_s32(*list_cmp)(list_data *a, list_data *b, core_results *res);
-list_head *core_list_mergesort(list_head *list, list_cmp cmp, core_results *res);
+IMEM list_head *core_list_mergesort(list_head *list, list_cmp cmp, core_results *res);
 
-ee_s16 calc_func(ee_s16 *pdata, core_results *res) {
+IMEM ee_s16 calc_func(ee_s16 *pdata, core_results *res) {
 	ee_s16 data=*pdata;
 	ee_s16 retval;
 	ee_u8 optype=(data>>7) & 1; /* bit 7 indicates if the function result has been cached */
@@ -97,7 +97,7 @@ ee_s16 calc_func(ee_s16 *pdata, core_results *res) {
 
 	Can be used by mergesort.
 */
-ee_s32 cmp_complex(list_data *a, list_data *b, core_results *res) {
+IMEM ee_s32 cmp_complex(list_data *a, list_data *b, core_results *res) {
 	ee_s16 val1=calc_func(&(a->data16),res);
 	ee_s16 val2=calc_func(&(b->data16),res);
 	return val1 - val2;
@@ -108,7 +108,7 @@ ee_s32 cmp_complex(list_data *a, list_data *b, core_results *res) {
 
 	Can be used by mergesort.
 */
-ee_s32 cmp_idx(list_data *a, list_data *b, core_results *res) {
+IMEM ee_s32 cmp_idx(list_data *a, list_data *b, core_results *res) {
 	if (res==NULL) {
 		a->data16 = (a->data16 & 0xff00) | (0x00ff & (a->data16>>8));
 		b->data16 = (b->data16 & 0xff00) | (0x00ff & (b->data16>>8));

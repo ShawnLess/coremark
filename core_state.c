@@ -18,7 +18,7 @@ Original Author: Shay Gal-on
 
 #include "coremark.h"
 /* local functions */
-enum CORE_STATE core_state_transition( ee_u8 **instr , ee_u32 *transition_count);
+IMEM enum CORE_STATE core_state_transition( ee_u8 **instr , ee_u32 *transition_count);
 
 /*
 Topic: Description
@@ -40,7 +40,7 @@ Topic: Description
 
 	Go over the input twice, once direct, and once after introducing some corruption. 
 */
-ee_u16 core_bench_state(ee_u32 blksize, ee_u8 *memblock, 
+IMEM ee_u16 core_bench_state(ee_u32 blksize, ee_u8 *memblock, 
 		ee_s16 seed1, ee_s16 seed2, ee_s16 step, ee_u16 crc) 
 {
 	ee_u32 final_counts[NUM_CORE_STATES];
@@ -165,7 +165,7 @@ void core_init_state(ee_u32 size, ee_s16 seed, ee_u8 *p) {
 #endif
 }
 
-static ee_u8 ee_isdigit(ee_u8 c) {
+IMEM static ee_u8 ee_isdigit(ee_u8 c) {
 	ee_u8 retval;
 	retval = ((c>='0') & (c<='9')) ? 1 : 0;
 	return retval;

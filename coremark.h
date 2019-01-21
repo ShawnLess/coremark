@@ -161,7 +161,7 @@ ee_u8 core_stop_parallel(core_results *res);
 
 /* list benchmark functions */
 list_head *core_list_init(ee_u32 blksize, list_head *memblock, ee_s16 seed);
-ee_u16 core_bench_list(core_results *res, ee_s16 finder_idx);
+IMEM ee_u16 core_bench_list(core_results *res, ee_s16 finder_idx);
 
 /* state benchmark functions */
 void core_init_state(ee_u32 size, ee_s16 seed, ee_u8 *p);

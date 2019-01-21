@@ -34,11 +34,11 @@ Topic: Description
 	The actual values for A and B must be derived based on input that is not available at compile time.
 */
 ee_s16 matrix_test(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B, MATDAT val);
-ee_s16 matrix_sum(ee_u32 N, MATRES *C, MATDAT clipval);
+IMEM ee_s16 matrix_sum(ee_u32 N, MATRES *C, MATDAT clipval);
 void matrix_mul_const(ee_u32 N, MATRES *C, MATDAT *A, MATDAT val);
-void matrix_mul_vect(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B);
-void matrix_mul_matrix(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B);
-void matrix_mul_matrix_bitextract(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B);
+IMEM void matrix_mul_vect(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B);
+IMEM void matrix_mul_matrix(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B);
+IMEM void matrix_mul_matrix_bitextract(ee_u32 N, MATRES *C, MATDAT *A, MATDAT *B);
 void matrix_add_const(ee_u32 N, MATDAT *A, MATDAT val);
 
 #define matrix_test_next(x) (x+1)
@@ -78,7 +78,7 @@ void printmatC(MATRES *C, ee_u32 N, char *name) {
 	Iterate <matrix_test> N times, 
 	changing the matrix values slightly by a constant amount each time.
 */
-ee_u16 core_bench_matrix(mat_params *p, ee_s16 seed, ee_u16 crc) {
+IMEM ee_u16 core_bench_matrix(mat_params *p, ee_s16 seed, ee_u16 crc) {
 	ee_u32 N=p->N;
 	MATRES *C=p->C;
 	MATDAT *A=p->A;

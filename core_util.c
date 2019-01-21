@@ -139,7 +139,7 @@ ee_s32 get_seed_32(int i) {
 	Service functions to calculate 16b CRC code.
 
 */
-ee_u16 crcu8(ee_u8 data, ee_u16 crc )
+IMEM ee_u16 crcu8(ee_u8 data, ee_u16 crc )
 {
 	ee_u8 i=0,x16=0,carry=0;
 
@@ -163,7 +163,8 @@ ee_u16 crcu8(ee_u8 data, ee_u16 crc )
     }
 	return crc;
 } 
-ee_u16 crcu16(ee_u16 newval, ee_u16 crc) {
+
+IMEM ee_u16 crcu16(ee_u16 newval, ee_u16 crc) {
 	crc=crcu8( (ee_u8) (newval)				,crc);
 	crc=crcu8( (ee_u8) ((newval)>>8)	,crc);
 	return crc;
@@ -173,7 +174,8 @@ ee_u16 crcu32(ee_u32 newval, ee_u16 crc) {
 	crc=crc16((ee_s16) (newval>>16)	,crc);
 	return crc;
 }
-ee_u16 crc16(ee_s16 newval, ee_u16 crc) {
+
+IMEM ee_u16 crc16(ee_s16 newval, ee_u16 crc) {
 	return crcu16((ee_u16)newval, crc);
 }
 
