@@ -18,6 +18,9 @@
 #
 export PROG_NAME=coremark
 
+DUMP_ITERATE	?=0
+ITERATE_CONTEXT ?=0
+
 include ../Makefile.include
 
 #############################################
@@ -38,7 +41,16 @@ AS		= $(RISCV_GCC)  -D__ASSEMBLY__=1
 # Flag : CFLAGS
 #	Use this flag to define compiler options. Note, you can add compiler options from the command line using XCFLAGS="other flags"
 PORT_CFLAGS = -O0 -g $(RISCV_GCC_OPTS)
-FLAGS_STR = "$(PORT_CFLAGS) $(XCFLAGS) $(XLFLAGS) $(LFLAGS_END)"
+
+ifneq ($(DUMP_ITERATE),0)
+	PORT_CFLAGS += -DDUMP_ITERATE=1
+endif  
+
+ifneq ($(ITERATE_CONTEXT),0)
+	PORT_CFLAGS += -DITERATE_CONTEXT=1
+endif  
+
+FLAGS_STR = "$(XCFLAGS) $(XLFLAGS) $(LFLAGS_END)"
 CFLAGS = $(PORT_CFLAGS) -I$(PORT_DIR) -I. -DFLAGS_STR=\"$(FLAGS_STR)\" 
 #Flag : LFLAGS_END
 #	Define any libraries needed for linking or other flags that should come at the end of the link line (e.g. linker scripts). 
@@ -48,7 +60,7 @@ SEPARATE_COMPILE=1
 # You must also define below how to create an object file, and how to link.
 OBJOUT 	= -o
 LFLAGS 	= $(RISCV_LINK_OPTS)
-ASFLAGS =
+ASFLAGS = -c $(CFLAGS)
 OFLAG 	= -o
 COUT 	= -c
 
@@ -58,10 +70,11 @@ LFLAGS_END =
 #	You may also need cvt.c if the fcvt functions are not provided as intrinsics by your compiler!
 PORT_SRCS = $(PORT_DIR)/core_portme.c $(PORT_DIR)/ee_printf.c 
 PORT_OBJS = $(PORT_DIR)/core_portme.o $(PORT_DIR)/ee_printf.o  \
-	    $(PORT_DIR)/bsg_set_tile_x_y.o
+	    $(PORT_DIR)/bsg_set_tile_x_y.o  $(PORT_DIR)/crt.o
 
 vpath %.c $(PORT_DIR)  $(BSG_MANYCORE_DIR)/software/bsg_manycore/lib
 vpath %.s $(PORT_DIR)
+vpath %.S $(BSG_MANYCORE_DIR)/software/spmd/common/
 
 # Flag : LOAD
 #	For a simple port, we assume self hosted compile and run, no load needed.
@@ -81,7 +94,7 @@ $(OPATH)$(PORT_DIR)/%$(OEXT) : %.c
 $(OPATH)%$(OEXT) : %.c
 	$(CC) $(CFLAGS) $(XCFLAGS) $(COUT) $< $(OBJOUT) $@
 
-$(OPATH)$(PORT_DIR)/%$(OEXT) : %.s
+$(OPATH)$(PORT_DIR)/%$(OEXT) : %.S
 	$(AS) $(ASFLAGS) $< $(OBJOUT) $@
 
 # Target : port_pre% and port_post%
@@ -95,5 +108,4 @@ port_pre% port_post% :
 OPATH = ./
 MKDIR = mkdir -p
 PORT_CLEAN= -rf $(OPATH)*$(OEXT) $(PORT_DIR)/*$(OEXT) \
-$(OPATH)*.mem $(OPATH)csrc $(OPATH)simv $(OPATH)/simv.daidir $(OPATH)ucli.key $(OPATH)vcdplus.vpd
-
+$(OPATH)*.mem $(OPATH)csrc $(OPATH)simv $(OPATH)/simv.daidir $(OPATH)ucli.key $(OPATH)vcdplus.vpd $(OPATH)*.map
