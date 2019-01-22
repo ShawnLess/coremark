@@ -18,7 +18,7 @@
 #
 export PROG_NAME=coremark
 
-DUMP_ITERATE	?=0
+DUMP_CONTEXT    ?=0
 ITERATE_CONTEXT ?=0
 
 RISCV_GCC_EXTRA_OPTS ?= -O1
@@ -44,8 +44,8 @@ AS		= $(RISCV_GCC)  -D__ASSEMBLY__=1
 #	Use this flag to define compiler options. Note, you can add compiler options from the command line using XCFLAGS="other flags"
 PORT_CFLAGS = -O0 -g $(RISCV_GCC_OPTS)
 
-ifneq ($(DUMP_ITERATE),0)
-	PORT_CFLAGS += -DDUMP_ITERATE=1
+ifneq ($(DUMP_CONTEXT),0)
+	PORT_CFLAGS += -DDUMP_CONTEXT=1
 endif  
 
 ifneq ($(ITERATE_CONTEXT),0)
