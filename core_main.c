@@ -54,6 +54,10 @@ IMEM void *iterate(void *pres){
 		if (i==0) res->crclist=res->crc;
 	}
 
+        asm("li  t0,  0x1000;");
+        asm("lw  t1,  0(t0); ");
+        asm("sw  t0,  0(t1); ");
+
 	return NULL;
 }
 
