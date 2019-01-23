@@ -235,8 +235,9 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
 	}
 #else
         ee_printf("Manycore>>  begin to iterate, iteration number =%d.\n", results[0].iterations);
-        //Save the context to register or stack
         asm ("li t0, 0x4204ead0;"); // the finish address
+        //Save the context to register or stack
+        asm ("mv a0, %0"::"r"(&results[0]));
         #ifdef DUMP_CONTEXT
                 asm("sw x0, 0(t0);");
         #else
