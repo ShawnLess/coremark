@@ -46,6 +46,7 @@ PORT_CFLAGS = -O0 -g $(RISCV_GCC_OPTS)
 
 ifneq ($(DUMP_CONTEXT),0)
 	PORT_CFLAGS += -DDUMP_CONTEXT=1
+	_enable_dump =1
 endif  
 
 ifneq ($(ITERATE_CONTEXT),0)
