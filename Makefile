@@ -133,6 +133,10 @@ force_rebuild:
 check:
 	md5sum -c coremark.md5 
 
+dump:
+	make clean; make coremark.run ITERATIONS=1 DUMP_CONTEXT=1
+verify:
+	make clean; make coremark.run ITERATIONS=1 ITERATE_CONTEXT=1
 %.echo:
 	echo $($*)
 

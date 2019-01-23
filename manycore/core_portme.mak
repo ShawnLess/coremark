@@ -50,6 +50,10 @@ endif
 
 ifneq ($(ITERATE_CONTEXT),0)
 	PORT_CFLAGS += -DITERATE_CONTEXT=1
+	_dmem_init_file_name =iterate_dmem.mem
+	_bsg_data_start_addr =1000
+	_bsg_data_end_addr   =2000
+	START_ONE_CORE       =1
 endif  
 
 FLAGS_STR = "$(XCFLAGS) $(XLFLAGS) $(LFLAGS_END)"
@@ -110,6 +114,7 @@ port_pre% port_post% :
 OPATH = ./
 MKDIR = mkdir -p
 PORT_CLEAN= -rf $(OPATH)*$(OEXT) $(PORT_DIR)/*$(OEXT) \
-$(OPATH)*.mem $(OPATH)csrc $(OPATH)simv $(OPATH)/simv.daidir $(OPATH)ucli.key $(OPATH)vcdplus.vpd $(OPATH)*.map
+$(OPATH)coremark_dmem.mem $(OPATH)coremark_dram.mem   \
+$(OPATH)csrc $(OPATH)simv $(OPATH)/simv.daidir $(OPATH)ucli.key $(OPATH)vcdplus.vpd $(OPATH)*.map
 
 include ../../mk/Makefile.tail_rules

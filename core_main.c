@@ -36,12 +36,10 @@ static ee_u16 matrix_known_crc[] =      {(ee_u16)0xbe52,(ee_u16)0x1199,(ee_u16)0
 static ee_u16 state_known_crc[]  =      {(ee_u16)0x5e47,(ee_u16)0x39bf,(ee_u16)0xe5a4,(ee_u16)0x8e3a,(ee_u16)0x8d84};
 IMEM void *iterate(void *pres){
 
-
 	ee_u32 i;
 	ee_u16 crc;
 	core_results *res=(core_results *)pres;
 	ee_u32 iterations=res->iterations;
-
 
 	res->crc=0;
 	res->crclist=0;
@@ -55,6 +53,7 @@ IMEM void *iterate(void *pres){
 		res->crc=crcu16(crc,res->crc);
 		if (i==0) res->crclist=res->crc;
 	}
+
 	return NULL;
 }
 
@@ -246,6 +245,9 @@ MAIN_RETURN_TYPE main(int argc, char *argv[]) {
         
         __asm__ __volatile__ (".global _bsg_resume_addr;" );
         __asm__ __volatile__ (" _bsg_resume_addr:" );
+
+        ee_printf("Manycore>> out of  iteration .\n");
+
 	stop_time();
 	total_time=get_time();
 	/* get a function of the input to report */
