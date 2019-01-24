@@ -137,6 +137,7 @@ dump:
 	make clean; make coremark.run ITERATIONS=1 DUMP_CONTEXT=1
 verify:
 	make clean; make coremark.run ITERATIONS=1 ITERATE_CONTEXT=1
+	cat manycore_imem.c  manycore_dmem.c > manycore_image.c
 %.echo:
 	echo $($*)
 
