@@ -140,6 +140,7 @@ dump:
 verify:
 	make clean; make coremark.run ITERATIONS=1 ITERATE_CONTEXT=1
 	cat manycore_imem.c  manycore_dmem.c > manycore_image.c
+	echo 'int stop_stub_addr =' $$( nm coremark.riscv | grep _bsg_stop_stub | awk '{print $$1}' | sed 's/^8/0x0/' ) ";" >> manycore_image.c
 %.echo:
 	echo $($*)
 
