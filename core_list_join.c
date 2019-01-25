@@ -53,7 +53,7 @@ IMEM list_head *core_list_find(list_head *list,list_data *info);
 IMEM list_head *core_list_reverse(list_head *list);
 IMEM list_head *core_list_remove(list_head *item);
 IMEM list_head *core_list_undo_remove(list_head *item_removed, list_head *item_modified);
-IMEM list_head *core_list_insert_new(list_head *insert_point
+     list_head *core_list_insert_new(list_head *insert_point
 	, list_data *info, list_head **memblock, list_data **datablock
 	, list_head *memblock_end, list_data *datablock_end);
 typedef ee_s32(*list_cmp)(list_data *a, list_data *b, core_results *res);

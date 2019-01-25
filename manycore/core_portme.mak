@@ -21,7 +21,7 @@ export PROG_NAME=coremark
 DUMP_CONTEXT    ?=0
 ITERATE_CONTEXT ?=0
 
-RISCV_GCC_EXTRA_OPTS ?= -O1
+RISCV_GCC_EXTRA_OPTS ?= -Os
 
 include ../Makefile.include
 
