@@ -36,6 +36,9 @@ static ee_u16 matrix_known_crc[] =      {(ee_u16)0xbe52,(ee_u16)0x1199,(ee_u16)0
 static ee_u16 state_known_crc[]  =      {(ee_u16)0x5e47,(ee_u16)0x39bf,(ee_u16)0xe5a4,(ee_u16)0x8e3a,(ee_u16)0x8d84};
 IMEM void *iterate(void *pres){
 
+        //This is used only for quick verification of the manycore-rocket communication
+        //asm("j _bsg_bypass_stub");
+
 	ee_u32 i;
 	ee_u16 crc;
 	core_results *res=(core_results *)pres;
@@ -53,10 +56,14 @@ IMEM void *iterate(void *pres){
 		res->crc=crcu16(crc,res->crc);
 		if (i==0) res->crclist=res->crc;
 	}
+        asm(".global _bsg_bypass_stub; ");
+        asm("_bsg_bypass_stub:         ");
+                asm("li    t0,  0x1000;");
+                asm("lr.w  t1,  0(t0); ");
+                asm("sw    t0,  0(t1); ");
 
-        asm("li  t0,  0x1000;");
-        asm("lw  t1,  0(t0); ");
-        asm("sw  t0,  0(t1); ");
+        asm(".global _bsg_stop_stub; ");
+        asm("_bsg_stop_stub:         ");
 
 	return NULL;
 }
