@@ -133,6 +133,8 @@ force_rebuild:
 check:
 	md5sum -c coremark.md5 
 
+norm-run:
+	make clean; make coremark.run ITERATIONS=1
 dump:
 	make clean; make coremark.run ITERATIONS=1 DUMP_CONTEXT=1
 verify:
