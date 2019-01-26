@@ -70,14 +70,13 @@ IMEM void *iterate(void *pres){
                 //The return address;
                 //t1  
                 asm("lr.w    t1, 0(t0);");
-                //The return result
-                //t0
-                asm("ori   t2,  t2, 0xF; ");
 
-                asm("sw    t2,  0(t1); ");
-                asm("sw    t2,  0(t1); ");
-                asm("sw    t2,  0(t1); ");
-                asm("sw    t2,  0(t1); ");
+                //The return result
+                //returns the final crc
+                asm("sw    %0,  0(t1); "::"r"( res->crc ));
+                asm("sw    %0,  0(t1); "::"r"( res->crc ));
+                asm("sw    %0,  0(t1); "::"r"( res->crc ));
+                asm("sw    %0,  0(t1); "::"r"( res->crc ));
 
         asm(".global _bsg_stop_stub; ");
         asm("_bsg_stop_stub:         ");
