@@ -59,11 +59,29 @@ IMEM void *iterate(void *pres){
         asm(".global _bsg_bypass_stub; ");
         asm("_bsg_bypass_stub:         ");
                 asm("li    t0,  0x1000;");
-                asm("lr.w  t1,  0(t0); ");
-                asm("sw    t0,  0(t1); ");
+                //The delay counter
+                //t2
+                asm("lw    t1,   4(t0); ");
+                asm("mv    t2,  t1   ; ");
+                asm("1: ");
+                asm("addi  t1, t1, -1; ");
+                asm("bgtz  t1, 1b    ; ");   
+
+                //The return address;
+                //t1  
+                asm("lr.w    t1, 0(t0);");
+                //The return result
+                //t0
+                asm("ori   t2,  t2, 0xF; ");
+
+                asm("sw    t2,  0(t1); ");
+                asm("sw    t2,  0(t1); ");
+                asm("sw    t2,  0(t1); ");
+                asm("sw    t2,  0(t1); ");
 
         asm(".global _bsg_stop_stub; ");
         asm("_bsg_stop_stub:         ");
+        //      lr.w.aq t1,(t0)
 
 	return NULL;
 }
