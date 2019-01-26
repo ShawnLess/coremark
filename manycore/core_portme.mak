@@ -56,6 +56,11 @@ ifneq ($(ITERATE_CONTEXT),0)
 	_bsg_data_end_addr   =2000
 	START_ONE_CORE       =1
 	_enable_dump_imem    =1
+
+ifneq ($(GEN_ONLY),0)
+	_gen_only	     =1
+endif
+
 endif  
 
 FLAGS_STR = "$(XCFLAGS) $(XLFLAGS) $(LFLAGS_END)"

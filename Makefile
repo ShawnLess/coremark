@@ -134,13 +134,21 @@ check:
 	md5sum -c coremark.md5 
 
 norm-run:
-	make clean; make coremark.run ITERATIONS=1
+	make clean; make coremark.run 
 dump:
-	make clean; make coremark.run ITERATIONS=1 DUMP_CONTEXT=1
+	make clean; make coremark.run  DUMP_CONTEXT=1
 verify:
-	make clean; make coremark.run ITERATIONS=1 ITERATE_CONTEXT=1
+	make clean; make coremark.run  ITERATE_CONTEXT=1
 	cat manycore_imem.c  manycore_dmem.c > manycore_image.c
 	echo 'int stop_stub_addr =' $$( nm coremark.riscv | grep _bsg_stop_stub | awk '{print $$1}' | sed 's/^8/0x0/' ) ";" >> manycore_image.c
+	echo 'int iterations = $(ITERATIONS);' >>manycore_image.c
+
+gen_only:
+	make clean; make coremark.run  DUMP_CONTEXT=1
+	make clean; make coremark.run  ITERATE_CONTEXT=1 GEN_ONLY=1
+	cat manycore_imem.c  manycore_dmem.c > manycore_image.c
+	echo 'int stop_stub_addr =' $$( nm coremark.riscv | grep _bsg_stop_stub | awk '{print $$1}' | sed 's/^8/0x0/' ) ";" >> manycore_image.c
+	echo 'int iterations = $(ITERATIONS);' >>manycore_image.c
 %.echo:
 	echo $($*)
 
