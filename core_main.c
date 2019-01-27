@@ -77,6 +77,10 @@ IMEM void *iterate(void *pres){
                 asm("sw    %0,  0(t1); "::"r"( res->crc ));
                 asm("sw    %0,  0(t1); "::"r"( res->crc ));
                 asm("sw    %0,  0(t1); "::"r"( res->crc ));
+                asm("sw    %0,  0(t1); "::"r"( res->crc ));
+                asm("sw    %0,  0(t1); "::"r"( res->crc ));
+                asm("sw    %0,  0(t1); "::"r"( res->crc ));
+                asm("sw    %0,  0(t1); "::"r"( res->crc ));
 
         asm(".global _bsg_stop_stub; ");
         asm("_bsg_stop_stub:         ");
