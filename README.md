@@ -1,4 +1,72 @@
+# Run with Manycore
 
+1. Checkout Manycore
+
+```bash
+  git clone https://bitbucket.org/taylor-bsg/bsg\_manycore.git
+  cd bsg\_manycore; git checkout coremark-manycore
+```
+
+2. Chekcout ported coremark
+
+```bash
+   cd bsg_manycore/software/spmd/ 
+   rm -rf coremark
+   git clone https://github.com/ShawnLess/coremark.git
+   cd coremark
+   checkout manycore
+``` 
+3. Chekcout right bsg\_ip\_cores repo
+
+The bsg\_ip\_cores repo should be in the same directory level of bsg\_manycore. We should also checkout the commit that
+is compatible with coremark-manycore branch in bsg\_manycore.
+
+```bash
+   git clone https://bitbucket.org/taylor-bsg/bsg\_ip\_cores.git
+   cd bsg_ip_cores; git checkout 'master@{2019-01-26 18:30:00}'
+```
+
+4. Checkout bsg\_cadenv
+
+This is a pravite repo. contact Michael <prof.taylor@gmail.com> for access.
+
+5. Run the normal RTL simulation. 
+
+```bash
+    cd bsg_manycore/software/spmd/coremark
+    make norm-run PORT_DIR=manycore ITERATIONS=1
+```
+This will run 1 iteraion of the coremark. The output looks like following:
+
+```bash
+## freeze_r <= 0 (test_bsg_manycore.UUT.y[1].x[1].tile.proc.h.z)
+Manycore>>  x/y corrdination setting completed.
+Manycore>>  start to initilize  benchmark data.
+Manycore>>  finished benchmark initialization.
+Manycore>>  begin to iterate, iteration number =1.
+## x,y = 0,0 enabling reservation on 00001000
+Manycore>> out of  iteration .
+2K performance run parameters for coremark.
+CoreMark Size    : 666
+Total ticks      : 100
+Total time (secs): 100
+Iterations/Sec   : 0
+Iterations       : 1
+Compiler version : GCC8.2.0
+Compiler flags   :   
+Memory location  : STATIC
+seedcrc          : 0xe9f5
+[0]crclist       : 0xe714
+[0]crcmatrix     : 0x1fd7
+[0]crcstate      : 0x8e3a
+[0]crcfinal      : 0xe714
+Correct operation validated. See readme.txt for run and reporting rules.
+## RECEIVED FINISH PACKET from tile y,x= 0, 0 at I/O 00000001, data 00000000 on cycle 0x00000e7431 (       947249)
+```
+
+--------------------------------------------------------
+ Original Readme 
+--------------------------------------------------------
 # Introduction
 
 CoreMark's primary goals are simplicity and providing a method for testing only a processor's core features. For more information about EEMBC's comprehensive embedded benchmark suites, please see www.eembc.org.
