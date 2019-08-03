@@ -63,6 +63,60 @@ seedcrc          : 0xe9f5
 Correct operation validated. See readme.txt for run and reporting rules.
 ## RECEIVED FINISH PACKET from tile y,x= 0, 0 at I/O 00000001, data 00000000 on cycle 0x00000e7431 (       947249)
 ```
+# Run on Celerity
+1. Checkout Celerity V2 Repos.
+
+```bash
+ git clone  https://Shaolin_Xie@bitbucket.org/taylor-bsg/bsg_celerity_benchmarks.git 
+ cd bsg_celerity_benchmarks;
+ make checkout-repos BASELINE=celerity_v2
+``` 
+
+2. Generates the manycore image for Rocket. 
+
+Before you run this step, make sure you already succeed in running CoreMark with manycore only. 
+
+```bash
+cd bsg_manycore/software/spmd/coremark
+make PORT_DIR=manycore ITERATIONS=1 gen_only
+```
+This will generate a **manycore\_image.c** in current dir.
+
+3. Compile the image and run the simulation
+
+```text
+Copy bsg_manycore/software/spmd/coremark/manycore_image.c 
+to   bsg_celerity_benchmarks/vcs-build/bsg_rocket/common/benchmark/bsg_rocket_mc_image_coremark
+```
+Then run follow commands
+
+```bash
+cd bsg_celerity_benchmarks/vcs-build/bsg_rocket/rockets/coyote/testing/rtl_five
+./compile bsg_rocket_mc_image_coremark
+make run BENCHMARK_0=bsg_rocket_mc_image_coremark
+```
+You should see following outputs:
+
+```bash
+## enable high on FSB in module test_five.dut.chip.g.fsb, node  5, time =  139970750
+>> Celerity V2
+>> Hello CoreMark!
+>> Inject stop instructions to manycore image, addr=000006bc, instr=1402a32f, replaced instruction =00c12083
+>> Begin to load manycore image ...
+>> Finish loading manycore image 
+>> Setting Manycore Returning Address=fc8039a0, Location=00001000
+>> Setting Manycore Delay Cycles=00000300, Location=00001004
+>> Waiting Result back, rocket checking address=000039a0
+>> Invoking tile y=0,x=0
+## freeze_r <= 0 (test_five.dut.chip.g.acc.manycore_rocc_inst.UUT.y[0].x[0].tile.proc.h.z.endp)
+## x,y =  0, 0 enabling reservation on 00001000
+
+>> PASS! ITERATIONS=2, RETURNED_CRC=72be, START CYCLE=110278, END CYCLE=177274, DELTA CYCLE=66996
+
+
+*** PASS
+```
+
 
 --------------------------------------------------------
  Original Readme 
